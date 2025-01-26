@@ -14,12 +14,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
-        
-        
-        
-        let OnboardingViewController = OnboardingViewController()
         window = UIWindow(windowScene: scene)
-        window?.rootViewController = OnboardingViewController 
+        
+        
+        let isSigned = UserDefaults.standard.bool(forKey: "isSigned")
+        
+        // start 값에 따라 초기 화면 결정
+        if isSigned {
+            window?.rootViewController = UINavigationController(rootViewController: TabBarController())
+        } else { // 0 이면 온보딩
+            window?.rootViewController = UINavigationController(rootViewController: OnboardingViewController())
+        }
         window?.makeKeyAndVisible()
     }
 

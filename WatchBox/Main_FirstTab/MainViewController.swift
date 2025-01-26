@@ -1,28 +1,26 @@
 //
-//  ProfileViewController.swift
+//  MainViewController.swift
 //  WatchBox
 //
-//  Created by 권우석 on 1/27/25.
+//  Created by 권우석 on 1/26/25.
 //
 
 import UIKit
 
-class ProfileViewController: UIViewController {
-    
+class MainViewController: BaseViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         
     }
     
+
     
     
     
     
     
     
-    
-    
-    
-    
+
 }

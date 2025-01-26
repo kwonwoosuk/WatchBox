@@ -18,21 +18,15 @@ final class OnboardingViewController: BaseViewController {
     private let descriptionsLabel = UILabel()
     private let startButton  = UIButton()
     
-    var start = true
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
-        
-        
-        
-        
     }
     
     override func configureHierarchy() {
         [imageView, startButton, titleLabel, descriptionsLabel].forEach{ view.addSubview($0) }
     }
+    
     override func configureLayout() {
         imageView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
@@ -55,12 +49,9 @@ final class OnboardingViewController: BaseViewController {
             make.leading.equalTo(view.snp.leading).offset(8)
             make.trailing.equalTo(view.snp.trailing).offset(-8)
             make.height.equalTo(48)
-            
         }
     }
-    
-    
-    
+
     override func configureView() {
         view.backgroundColor = .black
         imageView.image = UIImage(named: "onboarding")
@@ -78,7 +69,6 @@ final class OnboardingViewController: BaseViewController {
         descriptionsLabel.numberOfLines = 2
         descriptionsLabel.font = .boldSystemFont(ofSize: 15)
         
-        
         startButton.setTitle("시작하기", for: .normal)
         startButton.setTitleColor(.accentBlue , for: .normal)
         startButton.setTitleColor(.white, for: .highlighted)
@@ -88,18 +78,12 @@ final class OnboardingViewController: BaseViewController {
         startButton.layer.borderWidth = 3
         startButton.layer.cornerRadius = 22
         startButton.clipsToBounds = true
-        
     }
-    
-    
+
     @objc
     func startButtonTapped() {
-        
+        let vc = ProfileSettingViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
-    
-  
-    
-    
-
 }
 
