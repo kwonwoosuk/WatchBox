@@ -48,6 +48,11 @@ final class ProfileSettingViewController: BaseViewController {
     private func profileImageViewTapped() {
         let profileSettingImageVC = ProfileImageSettingViewController()
         profileSettingImageVC.selectedImage = profileImageView.image // 자연스럽기 위함입니다...
+        
+        profileSettingImageVC.selectedImageCell = { imageName in
+            self.profileImageView.image = UIImage(named: imageName)
+        }
+        
         navigationController?.pushViewController(profileSettingImageVC, animated: true)
     }
     
