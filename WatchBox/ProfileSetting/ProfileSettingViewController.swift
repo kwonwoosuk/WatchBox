@@ -13,21 +13,23 @@ final class ProfileSettingViewController: BaseViewController {
     
     
     // 이미지뷰 클릭시 프로필 이미지설정화면으로 넘어가려면 유저 인터렉션 허용, 탭 제스쳐 추가.. 버튼으로 만드는방법도 있음
-    private let profileImageView = UIImageView()
+    let profileImageView = UIImageView()
     private let cameraIcon = UIImageView()
     private let nicknameTextField = UITextField()
     private let textFieldUnderLine = UIView()
     private let nicknameStatusConfirmLabel = UILabel()
     private let saveButton = UIButton()
-    private let profileImageCount = 11
     
+    private let profileImageCount = 11
     var isSigned = false
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         isSigned = false
-        UserDefaults.standard.set(isSigned, forKey: "isSigned") //  탈퇴 할때 사용
+        UserDefaults.standard.set(isSigned, forKey: "isSigned") //  탈퇴 할때도 사용
     }
+    
+ 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,8 +37,33 @@ final class ProfileSettingViewController: BaseViewController {
         randomProfileImage()
         updateLabel(isValid: false, message: "")
         
+        profileImageView.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped))
+        profileImageView.addGestureRecognizer(tapGesture)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         nicknameTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+    }
+    
+    @objc
+    private func profileImageViewTapped() {
+        let profileSettingImageVC = ProfileImageSettingViewController()
+        profileSettingImageVC.selectedImage = profileImageView.image // 자연스럽기 위함입니다...
+        navigationController?.pushViewController(profileSettingImageVC, animated: true)
+    }
+    
+    @objc
+    func saveButtonTapped() {
+        UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
+        isSigned = true
+        UserDefaults.standard.set(isSigned, forKey: "isSigned")
+        
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else { return }
+        
+        window.rootViewController = UINavigationController(rootViewController: TabBarController())
+        window.makeKeyAndVisible()
+        
+        // 이름이랑 이미지 설정한거 넘겨줘야함
     }
     
     private func randomProfileImage() {
@@ -106,10 +133,11 @@ final class ProfileSettingViewController: BaseViewController {
         navigationController?.navigationBar.tintColor = .accentBlue
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         
+        
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.layer.borderColor = UIColor.accentBlue.cgColor
         profileImageView.layer.borderWidth = 3
-        
+    
         textFieldUnderLine.backgroundColor = .white
         
         cameraIcon.image = UIImage(systemName: "camera.fill")
@@ -134,6 +162,8 @@ final class ProfileSettingViewController: BaseViewController {
         saveButton.layer.cornerRadius = 24
         saveButton.clipsToBounds = true
     }
+    
+    
     //textFieldDidChangeSelection는 선택영역이 변결될때: 커서위치, 드래그한 단어같은 것이 바뀔때
     @objc func textFieldDidChange(_ textField: UITextField) {
         guard let text = textField.text?.trimmingCharacters(in: .whitespaces), !text.isEmpty else {
@@ -163,25 +193,15 @@ final class ProfileSettingViewController: BaseViewController {
     private func updateLabel(isValid: Bool, message: String) {
         saveButton.isEnabled = isValid
         saveButton.layer.borderColor = isValid ? UIColor.accentBlue.cgColor : UIColor.normalGray.cgColor
+        saveButton.setTitleColor(.accentBlue, for: .normal)
+        saveButton.setTitleColor(.normalGray, for: .disabled)
         saveButton.alpha = saveButton.isEnabled ? 1.0 : 0.5
         
         nicknameStatusConfirmLabel.text = message
         nicknameStatusConfirmLabel.textColor = isValid ? .accentBlue : .red
     }
     
-    @objc
-    func saveButtonTapped() {
-        UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
-        isSigned = true
-        UserDefaults.standard.set(isSigned, forKey: "isSigned")
-        
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else { return }
-        window.rootViewController = UINavigationController(rootViewController: TabBarController())
-        window.makeKeyAndVisible()
-        
-        // 이름이랑 이미지 설정한거 넘겨줘야함
-    }
+    
 }
 /*
  button.isEnabled = true

@@ -20,7 +20,7 @@
                                 <rect key="frame" x="45" y="189" width="303" height="220.66666666666663"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WatchBox" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NmY-v0-K6K">
-                                <rect key="frame" x="120" y="444.66666666666669" width="153" height="44"/>
+                                <rect key="frame" x="124" y="444.66666666666669" width="145" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="XJx-aY-9RJ"/>
                                 </constraints>
@@ -40,10 +40,9 @@
                         <constraints>
                             <constraint firstItem="keS-Ro-6jE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="45" id="3Nl-Vf-fFP"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="keS-Ro-6jE" secondAttribute="trailing" constant="45" id="4Zu-2l-spT"/>
+                            <constraint firstItem="NmY-v0-K6K" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="IAo-84-Wpd"/>
                             <constraint firstItem="NmY-v0-K6K" firstAttribute="top" secondItem="keS-Ro-6jE" secondAttribute="bottom" constant="35" id="KVt-d1-1da"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="NmY-v0-K6K" secondAttribute="trailing" constant="120" id="Zmg-He-rPQ"/>
                             <constraint firstItem="keS-Ro-6jE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="130" id="loh-g8-mjc"/>
-                            <constraint firstItem="NmY-v0-K6K" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="120" id="rbG-yS-vht"/>
                             <constraint firstItem="PA8-2b-ijp" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="s52-fh-cic"/>
                             <constraint firstItem="PA8-2b-ijp" firstAttribute="top" secondItem="NmY-v0-K6K" secondAttribute="bottom" constant="30" id="tDG-D0-lSh"/>
                         </constraints>
