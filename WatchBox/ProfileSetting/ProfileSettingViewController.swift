@@ -11,8 +11,6 @@ import SnapKit
 
 final class ProfileSettingViewController: BaseViewController {
     
-    
-    // 이미지뷰 클릭시 프로필 이미지설정화면으로 넘어가려면 유저 인터렉션 허용, 탭 제스쳐 추가.. 버튼으로 만드는방법도 있음
     let profileImageView = UIImageView()
     private let cameraIcon = UIImageView()
     private let nicknameTextField = UITextField()
@@ -21,15 +19,15 @@ final class ProfileSettingViewController: BaseViewController {
     private let saveButton = UIButton()
     
     private let profileImageCount = 11
-    var isSigned = false
+    var isJoined = false
+    
+    private var selectedImageName: String?
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        isSigned = false
-        UserDefaults.standard.set(isSigned, forKey: "isSigned") //  탈퇴 할때도 사용
+        isJoined = false
+        UserDefaults.standard.set(isJoined, forKey: "isSigned") //  탈퇴 할때도 사용
     }
-    
- 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,20 +45,23 @@ final class ProfileSettingViewController: BaseViewController {
     @objc
     private func profileImageViewTapped() {
         let profileSettingImageVC = ProfileImageSettingViewController()
-        profileSettingImageVC.selectedImage = profileImageView.image // 자연스럽기 위함입니다...
+        profileSettingImageVC.selectedImage = profileImageView.image
         
         profileSettingImageVC.selectedImageCell = { imageName in
             self.profileImageView.image = UIImage(named: imageName)
+            self.selectedImageName = imageName //  여기서 저장해버리면 되겠지 !!
         }
         
         navigationController?.pushViewController(profileSettingImageVC, animated: true)
     }
     
-    @objc
+    @objc // 이름 가입일자 이미지 넘겨줌
     func saveButtonTapped() {
+        isJoined = true
+        UserDefaults.standard.set(isJoined, forKey: "isJoined")
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
-        isSigned = true
-        UserDefaults.standard.set(isSigned, forKey: "isSigned")
+        UserDefaults.standard.set(Date(), forKey: "JoinDate")
+        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
@@ -68,7 +69,9 @@ final class ProfileSettingViewController: BaseViewController {
         window.rootViewController = UINavigationController(rootViewController: TabBarController())
         window.makeKeyAndVisible()
         
-        // 이름이랑 이미지 설정한거 넘겨줘야함
+        // 이름이랑 이미지 설정한거 넘겨줘야함 main으로
+        // 이름이랑 가입일은 유저디폴트에 있으니까 이미지만 넘겨줘도 되겠네?
+        // 이미지도 저장하면 되잖아...? 이미지 이름만 저장해주면 되니까! ^^
     }
     
     private func randomProfileImage() {

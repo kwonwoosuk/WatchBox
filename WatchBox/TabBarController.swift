@@ -41,7 +41,7 @@ class TabBarController: UITabBarController {
         let thirdNav = UINavigationController(rootViewController: thirdTab)
         
         
-        setViewControllers([firstNav, secondNav, thirdNav], animated: false)
+        setViewControllers([firstNav, secondNav, thirdNav], animated: true)
     }
     
     
@@ -51,7 +51,6 @@ class TabBarController: UITabBarController {
         
         tabBar.barTintColor = .black
         tabBar.tintColor = .accentBlue
-        tabBar.unselectedItemTintColor = .normalGray
     }
     
    

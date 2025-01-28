@@ -17,17 +17,10 @@ class ProfileImageCollectionViewCell: BaseCollectionViewCell {
         contentView.addSubview(profileImage)
     }
     
-    
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//        profileImage.layer.cornerRadius = profileImage.frame.width / 2
-//        profileImage.clipsToBounds = true
-//    }
-    
     override func configureLayout() {
         profileImage.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.size.equalTo(95)
+            make.size.equalTo(90)
         }
     }
     

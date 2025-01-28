@@ -39,6 +39,7 @@ class ProfileImageSettingViewController: BaseViewController {
 
     var selectedImage: UIImage?
     private var selectedIndex: IndexPath?
+    // 인덱스 패스가 들어올건데 안들어올 수도 있어 자동 Ni;l초기화
     
     private let images = [
         "profile_0", "profile_1", "profile_2", "profile_3", "profile_4",
@@ -79,14 +80,13 @@ class ProfileImageSettingViewController: BaseViewController {
         }
         
     }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
         profileImageView.clipsToBounds = true
         
     }
-    
-    
     
     override func configureView() {
         navigationItem.title = "프로필 이미지 설정"
@@ -100,6 +100,7 @@ class ProfileImageSettingViewController: BaseViewController {
     }
     
 }
+
 extension ProfileImageSettingViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
