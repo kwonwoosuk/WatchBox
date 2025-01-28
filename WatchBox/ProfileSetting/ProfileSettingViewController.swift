@@ -40,9 +40,9 @@ final class ProfileSettingViewController: BaseViewController {
         if isPresenting {
             
             saveButton.isHidden = true
-            let rightBarDoneButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveBarButtonTapped))
-            rightBarDoneButton.tintColor = .accentBlue
-            navigationItem.rightBarButtonItem = rightBarDoneButton
+            let rightBarSaveButton = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveBarButtonTapped))
+            rightBarSaveButton.tintColor = .accentBlue
+            navigationItem.rightBarButtonItem = rightBarSaveButton
             navigationItem.title = "프로필 편집"
             
             let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"),
@@ -80,28 +80,22 @@ final class ProfileSettingViewController: BaseViewController {
         isJoined = true
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
-        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
+        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName") // 처음에 랜덤을 안넘겨주니까 Nil로 초기화 되었던것
         UserDefaults.standard.set(isJoined, forKey: "isJoined")
+        
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
-        //루트뷰 설정할때 네비컨트롤러에 한번 더담음...
         window.rootViewController = TabBarController()
         window.makeKeyAndVisible()
-        
-        // 이름이랑 이미지 설정한거 넘겨줘야함 main으로
-        // 이름이랑 가입일은 유저디폴트에 있으니까 이미지만 넘겨줘도 되겠네?
-        // 이미지도 저장하면 되잖아...? 이미지 이름만 저장해주면 되니까! ^^
     }
     
-    
-    
-    
-    
-    @objc
+    @objc//우상단 저장버튼
     func saveBarButtonTapped() {
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
+        
         UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
+        
         profileUpdate?()
         dismiss(animated: true)
     }
@@ -109,12 +103,6 @@ final class ProfileSettingViewController: BaseViewController {
     @objc
     func closeButtonTapped() {
         dismiss(animated: true)
-    }
-    
-    func userDateSave() {
-        UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
-        UserDefaults.standard.set(Date(), forKey: "JoinDate")
-        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
     }
     
     private func randomProfileImage() {
@@ -125,10 +113,10 @@ final class ProfileSettingViewController: BaseViewController {
             }
             return
         }
-        
         let randomNumber = Int.random(in: 0...profileImageCount)
         let image = "profile_\(randomNumber)"
         profileImageView.image = UIImage(named: image)
+        selectedImageName = image // 랜덤이미지를 못넘겨줬던 이유...
     }
     
     override func configureHierarchy() {

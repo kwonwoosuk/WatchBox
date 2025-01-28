@@ -28,23 +28,14 @@ class MainViewController: BaseViewController {
         profileSection.addGestureRecognizer(tapGesture)
         profileSection.isUserInteractionEnabled = true
         
+        
+        print(profileImageName) //  왜 nil일까...
         navigationItem.title = "오늘의 영화"
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
-    func updateProfileData() {
-        let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
-        let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
-        let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
-//        print(updatedProfileImageName, updatedUserName, updatedJoinedDate)
-        profileSection.configure(
-            imageName: updatedProfileImageName ?? "profile_0",
-            name: updatedUserName ?? "이름을 불러오지 못했습니다",
-            joinedDate: updatedJoinedDate ?? Date()
-            
-        )
-        
-    }
+    
+    
     
     @objc
     private func profileSectionTapped() {
@@ -52,7 +43,10 @@ class MainViewController: BaseViewController {
         vc.isPresenting = true
         
         vc.nicknameTextField.text = userName
-        vc.profileImageView.image = UIImage(named: "profileImageName")
+        
+        if let imageName = profileImageName{
+            vc.profileImageView.image = UIImage(named: imageName)
+        }
         
         vc.profileUpdate = {
             self.updateProfileData()
@@ -60,6 +54,20 @@ class MainViewController: BaseViewController {
         
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
+    }
+    
+    func updateProfileData() {
+        let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
+        let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+        let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
+
+        profileSection.configure(
+            imageName: updatedProfileImageName ?? "profile_0",
+            name: updatedUserName ?? "이름을 불러오지 못했습니다",
+            joinedDate: updatedJoinedDate ?? Date()
+            
+        )
+        
     }
     
     override func configureHierarchy() {
@@ -75,9 +83,10 @@ class MainViewController: BaseViewController {
     }
     
     override func configureView() {
-        profileSection.configure(imageName: profileImageName ?? "profile_0",
-                                 name: userName ?? "이름을 불러오지 못했습니다",
-                                 joinedDate: joinedDate ?? Date())
+        profileSection.configure(
+            imageName: profileImageName ?? "profile_0",
+            name: userName ?? "이름을 불러오지 못했습니다",
+            joinedDate: joinedDate ?? Date())
         
         
     }

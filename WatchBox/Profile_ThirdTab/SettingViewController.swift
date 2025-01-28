@@ -39,12 +39,10 @@ class SettingViewController: BaseViewController {
         profileSection.addGestureRecognizer(tapGesture)
         profileSection.isUserInteractionEnabled = true
         
-        
         navigationItem.title = "설정"
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
-    
     
     func updateProfileData() {
         let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
@@ -55,9 +53,7 @@ class SettingViewController: BaseViewController {
             imageName: updatedProfileImageName ?? "profile_0",
             name: updatedUserName ?? "이름을 불러오지 못했습니다",
             joinedDate: updatedJoinedDate ?? Date()
-            
         )
-        
     }
     
     @objc
@@ -66,8 +62,10 @@ class SettingViewController: BaseViewController {
         vc.isPresenting = true
         
         vc.nicknameTextField.text = userName
-        vc.profileImageView.image = UIImage(named: "profileImageName")
         
+        if let imageName = profileImageName{
+            vc.profileImageView.image = UIImage(named: imageName)
+        }
         vc.profileUpdate = {
             self.updateProfileData()
         }
