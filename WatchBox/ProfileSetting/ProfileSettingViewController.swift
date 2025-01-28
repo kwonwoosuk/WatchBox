@@ -26,7 +26,7 @@ final class ProfileSettingViewController: BaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         isJoined = false
-        UserDefaults.standard.set(isJoined, forKey: "isSigned") //  탈퇴 할때도 사용
+        UserDefaults.standard.set(isJoined, forKey: "isJoined") //  탈퇴 할때도 사용
     }
     
     override func viewDidLoad() {
@@ -65,8 +65,8 @@ final class ProfileSettingViewController: BaseViewController {
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
-        
-        window.rootViewController = UINavigationController(rootViewController: TabBarController())
+        //루트뷰 설정할때 네비컨트롤러에 한번 더담음...
+        window.rootViewController = TabBarController()
         window.makeKeyAndVisible()
         
         // 이름이랑 이미지 설정한거 넘겨줘야함 main으로

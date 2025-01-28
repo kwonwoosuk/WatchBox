@@ -17,13 +17,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
         
         
-        let isJoined = UserDefaults.standard.bool(forKey: "isJoined")
+        var isJoined = UserDefaults.standard.bool(forKey: "isJoined")
         
         // start 값에 따라 초기 화면 결정
         if isJoined {
             window?.rootViewController = TabBarController()
         } else { // 0 이면 온보딩
-            window?.rootViewController = OnboardingViewController()
+            window?.rootViewController = UINavigationController(rootViewController: OnboardingViewController())
         }
         window?.makeKeyAndVisible()
     }

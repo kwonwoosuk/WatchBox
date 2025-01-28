@@ -19,6 +19,7 @@ class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationItem.title = "오늘의 영화"
         
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
@@ -32,7 +33,7 @@ class MainViewController: BaseViewController {
     override func configureLayout() {
         profileSection.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.horizontalEdges.equalToSuperview().inset(8)
+            make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(150)
         }
     }

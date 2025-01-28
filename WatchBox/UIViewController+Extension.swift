@@ -14,11 +14,10 @@ extension UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert) 
         
         let button = UIAlertAction(title: button, style: .default) { action in
+            completionHadler()
         }
         
-        
         let cancel = UIAlertAction(title: "취소", style: .destructive)
-        
         alert.addAction(cancel)
         alert.addAction(button)
         

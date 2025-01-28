@@ -30,15 +30,18 @@ class TabBarController: UITabBarController {
         let secondTab = SecondTabViewController()
         secondTab.tabBarItem.image = UIImage(systemName: "film.stack")
         
-        let thirdTab = ProfileViewController()
+        let thirdTab = SettingViewController()
         thirdTab.tabBarItem.image = UIImage(systemName: "person.crop.circle")
         
         
         
         
         let firstNav = UINavigationController(rootViewController: firstTab)
+        firstNav.view.backgroundColor = .black
         let secondNav = UINavigationController(rootViewController: secondTab)
+        secondNav.view.backgroundColor = .black
         let thirdNav = UINavigationController(rootViewController: thirdTab)
+        thirdNav.view.backgroundColor = .black
         
         
         setViewControllers([firstNav, secondNav, thirdNav], animated: true)
@@ -49,6 +52,8 @@ class TabBarController: UITabBarController {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         
+        tabBar.standardAppearance = appearance //  스크롤 엣지효과가 없을때
+        tabBar.scrollEdgeAppearance = appearance // " 있을때
         tabBar.barTintColor = .black
         tabBar.tintColor = .accentBlue
     }

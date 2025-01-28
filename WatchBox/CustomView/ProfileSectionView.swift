@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 class ProfileSectionView: BaseView {
-    //이름 이미지 가입날짜는 나중에 메서드로 받자
     private let backgroundView = UIView()
     
     private let profileImageView = UIImageView()
@@ -47,7 +46,7 @@ class ProfileSectionView: BaseView {
         }
         
         userNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(backgroundView).offset(22)
+            make.top.equalTo(backgroundView).offset(26)
             make.leading.equalTo(profileImageView.snp.trailing).offset(16)
         }
         
@@ -57,7 +56,7 @@ class ProfileSectionView: BaseView {
         }
         
         chevronButton.snp.makeConstraints { make in
-            make.top.equalTo(backgroundView).offset(24)
+            make.top.equalTo(backgroundView).offset(32)
             make.trailing.equalTo(backgroundView).offset(-16)
         }
         
@@ -84,7 +83,7 @@ class ProfileSectionView: BaseView {
         userNameLabel.textAlignment = .left
         userNameLabel.textColor = .white
         
-        joinedDateLabel.font = .boldSystemFont(ofSize: 12)
+        joinedDateLabel.font = .boldSystemFont(ofSize: 14)
         joinedDateLabel.textAlignment = .left
         joinedDateLabel.textColor = .gray
         
