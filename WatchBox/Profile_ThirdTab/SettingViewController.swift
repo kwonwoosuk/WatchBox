@@ -12,10 +12,10 @@ class SettingViewController: BaseViewController {
     
     
     
-    
-    private let userName = UserDefaults.standard.string(forKey: "UserName")
+    let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+    let userName = UserDefaults.standard.string(forKey: "UserName")
     private let joinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
-    private let ProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+    
     
     private let profileSection = ProfileSectionView()
     
@@ -28,15 +28,52 @@ class SettingViewController: BaseViewController {
         "탈퇴하기"
     ]
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateProfileData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileSectionTapped))
+        profileSection.addGestureRecognizer(tapGesture)
+        profileSection.isUserInteractionEnabled = true
+        
+        
         navigationItem.title = "설정"
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+    }
+    
+    
+    func updateProfileData() {
+        let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
+        let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+        let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
+//        print(updatedProfileImageName, updatedUserName, updatedJoinedDate)
+        profileSection.configure(
+            imageName: updatedProfileImageName ?? "profile_0",
+            name: updatedUserName ?? "이름을 불러오지 못했습니다",
+            joinedDate: updatedJoinedDate ?? Date()
+            
+        )
         
+    }
+    
+    @objc
+    private func profileSectionTapped() {
+        let vc = ProfileSettingViewController()
+        vc.isPresenting = true
         
+        vc.nicknameTextField.text = userName
+        vc.profileImageView.image = UIImage(named: "profileImageName")
+        
+        vc.profileUpdate = {
+            self.updateProfileData()
+        }
+        
+        let nav = UINavigationController(rootViewController: vc)
+        present(nav, animated: true)
     }
     
     override func configureHierarchy() {
@@ -59,7 +96,7 @@ class SettingViewController: BaseViewController {
     }
     
     override func configureView() {
-        profileSection.configure(imageName: ProfileImageName ?? "profile_0",
+        profileSection.configure(imageName: profileImageName ?? "profile_0",
                                  name: userName ?? "이름을 불러오지 못했습니다",
                                  joinedDate: joinedDate ?? Date())
         

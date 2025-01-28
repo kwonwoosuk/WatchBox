@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
         
         
-        var isJoined = UserDefaults.standard.bool(forKey: "isJoined")
+        let isJoined = UserDefaults.standard.bool(forKey: "isJoined")
         
         // start 값에 따라 초기 화면 결정
         if isJoined {

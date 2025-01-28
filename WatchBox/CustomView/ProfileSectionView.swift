@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 
 class ProfileSectionView: BaseView {
+    //탭했을때 present설정뷰
     private let backgroundView = UIView()
     
     private let profileImageView = UIImageView()
@@ -76,8 +77,6 @@ class ProfileSectionView: BaseView {
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.layer.borderColor = UIColor.accentBlue.cgColor
         profileImageView.layer.borderWidth = 3
-
-        
         
         userNameLabel.font = .systemFont(ofSize: 16, weight: .heavy)
         userNameLabel.textAlignment = .left
@@ -86,7 +85,6 @@ class ProfileSectionView: BaseView {
         joinedDateLabel.font = .boldSystemFont(ofSize: 14)
         joinedDateLabel.textAlignment = .left
         joinedDateLabel.textColor = .gray
-        
         
         chevronButton.tintColor = .gray
         chevronButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
@@ -98,13 +96,7 @@ class ProfileSectionView: BaseView {
         likeCountButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .heavy)
         likeCountButton.layer.cornerRadius = 12
         likeCountButton.clipsToBounds = true
-        
-        
-        
     }
-        
-        
-        
     
     func configure(imageName: String, name: String, joinedDate: Date) {
         profileImageView.image = UIImage(named: imageName)
@@ -112,6 +104,7 @@ class ProfileSectionView: BaseView {
         let joinedDate = joinedDate.signDateFormatting()
         joinedDateLabel.text = "\(joinedDate) 가입"
     }
+   
         
     
 }

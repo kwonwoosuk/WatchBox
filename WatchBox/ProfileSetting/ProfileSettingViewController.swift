@@ -13,56 +13,75 @@ final class ProfileSettingViewController: BaseViewController {
     
     let profileImageView = UIImageView()
     private let cameraIcon = UIImageView()
-    private let nicknameTextField = UITextField()
+    let nicknameTextField = UITextField()
     private let textFieldUnderLine = UIView()
     private let nicknameStatusConfirmLabel = UILabel()
     private let saveButton = UIButton()
     
     private let profileImageCount = 11
     var isJoined = false
-    
     private var selectedImageName: String?
+    
+    var isPresenting = false
+    
+    var profileUpdate: (() -> Void)?
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        isJoined = false
-        UserDefaults.standard.set(isJoined, forKey: "isJoined") //  탈퇴 할때도 사용
+        if !isPresenting{
+            isJoined = false
+            UserDefaults.standard.set(isJoined, forKey: "isJoined") //  탈퇴 할때도 사용
+            
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(#function)
-        randomProfileImage()
-        updateLabel(isValid: false, message: "")
+        if isPresenting {
+            
+            saveButton.isHidden = true
+            let rightBarDoneButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveBarButtonTapped))
+            rightBarDoneButton.tintColor = .accentBlue
+            navigationItem.rightBarButtonItem = rightBarDoneButton
+            navigationItem.title = "프로필 편집"
+            
+            let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"),
+                                              style: .plain,
+                                              target: self,
+                                              action: #selector(closeButtonTapped))
+            closeButton.tintColor = .accentBlue
+            navigationItem.leftBarButtonItem = closeButton
+        }
         
+        updateLabel(isValid: false, message: "")
+        randomProfileImage()
         profileImageView.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped))
         profileImageView.addGestureRecognizer(tapGesture)
+        
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         nicknameTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
-    @objc
+    @objc//초기 동그란 이미지 탭시
     private func profileImageViewTapped() {
         let profileSettingImageVC = ProfileImageSettingViewController()
         profileSettingImageVC.selectedImage = profileImageView.image
-        
+        profileSettingImageVC.isPresenting = isPresenting
         profileSettingImageVC.selectedImageCell = { imageName in
             self.profileImageView.image = UIImage(named: imageName)
             self.selectedImageName = imageName //  여기서 저장해버리면 되겠지 !!
         }
-        
         navigationController?.pushViewController(profileSettingImageVC, animated: true)
     }
     
     @objc // 이름 가입일자 이미지 넘겨줌
     func saveButtonTapped() {
         isJoined = true
-        UserDefaults.standard.set(isJoined, forKey: "isJoined")
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
         UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
-        
+        UserDefaults.standard.set(isJoined, forKey: "isJoined")
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
         //루트뷰 설정할때 네비컨트롤러에 한번 더담음...
@@ -74,7 +93,39 @@ final class ProfileSettingViewController: BaseViewController {
         // 이미지도 저장하면 되잖아...? 이미지 이름만 저장해주면 되니까! ^^
     }
     
+    
+    
+    
+    
+    @objc
+    func saveBarButtonTapped() {
+        UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
+        UserDefaults.standard.set(Date(), forKey: "JoinDate")
+        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
+        profileUpdate?()
+        dismiss(animated: true)
+    }
+    
+    @objc
+    func closeButtonTapped() {
+        dismiss(animated: true)
+    }
+    
+    func userDateSave() {
+        UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
+        UserDefaults.standard.set(Date(), forKey: "JoinDate")
+        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
+    }
+    
     private func randomProfileImage() {
+        if isPresenting {
+            if let savedImageName = UserDefaults.standard.string(forKey: "profileImageName") {
+                profileImageView.image = UIImage(named: savedImageName)
+                selectedImageName = savedImageName
+            }
+            return
+        }
+        
         let randomNumber = Int.random(in: 0...profileImageCount)
         let image = "profile_\(randomNumber)"
         profileImageView.image = UIImage(named: image)
@@ -135,7 +186,6 @@ final class ProfileSettingViewController: BaseViewController {
     }
     
     override func configureView() {
-        
         navigationItem.title = "프로필 설정"
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         navigationController?.navigationBar.tintColor = .accentBlue
@@ -170,7 +220,6 @@ final class ProfileSettingViewController: BaseViewController {
         saveButton.layer.cornerRadius = 24
         saveButton.clipsToBounds = true
     }
-    
     
     //textFieldDidChangeSelection는 선택영역이 변결될때: 커서위치, 드래그한 단어같은 것이 바뀔때
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -208,17 +257,5 @@ final class ProfileSettingViewController: BaseViewController {
         nicknameStatusConfirmLabel.text = message
         nicknameStatusConfirmLabel.textColor = isValid ? .accentBlue : .red
     }
-    
-    
 }
-/*
- button.isEnabled = true
- button.backgroundColor = .blue
- 
- 
- button.isEnabled = false
- button.backgroundColor = .gray
- 
- 
- button.alpha = button.isEnabled ? 1.0 : 0.5
- */
+

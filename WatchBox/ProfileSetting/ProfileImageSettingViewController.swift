@@ -19,6 +19,7 @@ class ProfileImageSettingViewController: BaseViewController {
     var selectedImageCell: ((String) -> Void)?
     
     let profileImageView = UIImageView()
+    var isPresenting: Bool?
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -50,6 +51,7 @@ class ProfileImageSettingViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         profileImageView.image = selectedImage // 전 화면에서 랜덤선택되엇던 것
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,7 +91,7 @@ class ProfileImageSettingViewController: BaseViewController {
     }
     
     override func configureView() {
-        navigationItem.title = "프로필 이미지 설정"
+        navigationItem.title = isPresenting == true ? "프로필 이미지 편집" : "프로필 이미지 설정"
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         navigationController?.navigationBar.tintColor = .accentBlue
         navigationController?.navigationBar.topItem?.backButtonTitle = ""

@@ -24,8 +24,7 @@ class SettingViewTableViewCell: BaseTableViewCell {
             make.trailing.equalToSuperview().offset(-16)
         }
     }
-    
-    
+
     override func configureView() {
         settingMenuLabel.font = .systemFont(ofSize: 14)
         settingMenuLabel.textColor = .white
