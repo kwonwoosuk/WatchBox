@@ -8,59 +8,34 @@
 import UIKit
 import SnapKit
 
-
+// 초기 프로필 설정과 편집에 재사용
 final class ProfileSettingViewController: BaseViewController {
     
     let profileImageView = UIImageView()
-    private let cameraIcon = UIImageView()
     let nicknameTextField = UITextField()
+    private let cameraIcon = UIImageView()
     private let textFieldUnderLine = UIView()
     private let nicknameStatusConfirmLabel = UILabel()
     private let saveButton = UIButton()
     
     private let profileImageCount = 11
-    var isJoined = false
     private var selectedImageName: String?
     
+    var isJoined = false
     var isPresenting = false
-    
     var profileUpdate: (() -> Void)?
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if !isPresenting{
             isJoined = false
-            UserDefaults.standard.set(isJoined, forKey: "isJoined") //  탈퇴 할때도 사용
-            
+            UserDefaults.standard.set(isJoined, forKey: "isJoined")
         }
+        nicknameTextField.becomeFirstResponder()
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        if isPresenting {
-            
-            saveButton.isHidden = true
-            let rightBarSaveButton = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveBarButtonTapped))
-            rightBarSaveButton.tintColor = .accentBlue
-            navigationItem.rightBarButtonItem = rightBarSaveButton
-            navigationItem.title = "프로필 편집"
-            
-            let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"),
-                                              style: .plain,
-                                              target: self,
-                                              action: #selector(closeButtonTapped))
-            closeButton.tintColor = .accentBlue
-            navigationItem.leftBarButtonItem = closeButton
-        }
         
-        updateLabel(isValid: false, message: "")
-        randomProfileImage()
-        profileImageView.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped))
-        profileImageView.addGestureRecognizer(tapGesture)
-        
-        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-        nicknameTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
     @objc//초기 동그란 이미지 탭시
@@ -93,7 +68,6 @@ final class ProfileSettingViewController: BaseViewController {
     func saveBarButtonTapped() {
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
-        
         UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
         
         profileUpdate?()
@@ -179,7 +153,6 @@ final class ProfileSettingViewController: BaseViewController {
         navigationController?.navigationBar.tintColor = .accentBlue
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         
-        
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.layer.borderColor = UIColor.accentBlue.cgColor
         profileImageView.layer.borderWidth = 3
@@ -207,9 +180,41 @@ final class ProfileSettingViewController: BaseViewController {
         saveButton.layer.borderWidth = 3
         saveButton.layer.cornerRadius = 24
         saveButton.clipsToBounds = true
+        
+        if isPresenting { // 커스텀뷰를 탭해서 Present로 나올경우view설정  이름 바꿔주고 x버튼 저장버튼 보여주기
+            saveButton.isHidden = true
+            let rightBarSaveButton = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveBarButtonTapped))
+            rightBarSaveButton.tintColor = .accentBlue
+            navigationItem.rightBarButtonItem = rightBarSaveButton
+            navigationItem.title = "프로필 편집"
+            
+            let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"),
+                                              style: .plain,
+                                              target: self,
+                                              action: #selector(closeButtonTapped))
+            closeButton.tintColor = .accentBlue
+            navigationItem.leftBarButtonItem = closeButton
+        }
+        
+        updateLabel(isValid: false, message: "")
+        randomProfileImage()
+        profileImageView.isUserInteractionEnabled = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageViewTapped))
+        profileImageView.addGestureRecognizer(tapGesture)
+        let viewTapGesture = UITapGestureRecognizer(target: self, action: #selector(keyboardDismiss))
+        view.addGestureRecognizer(viewTapGesture)
+        
+        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        nicknameTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
-    //textFieldDidChangeSelection는 선택영역이 변결될때: 커서위치, 드래그한 단어같은 것이 바뀔때
+    @objc func keyboardDismiss() {
+        view.endEditing(true)
+    }
+    
+    
+    
     @objc func textFieldDidChange(_ textField: UITextField) {
         guard let text = textField.text?.trimmingCharacters(in: .whitespaces), !text.isEmpty else {
             updateLabel(isValid: false, message: "공백은 사용할 수 없어요")
@@ -232,6 +237,7 @@ final class ProfileSettingViewController: BaseViewController {
             updateLabel(isValid: false, message: "닉네임에 숫자는 포함할 수 없어요")
             return
         }
+        
         updateLabel(isValid: true, message: "사용할 수 있는 닉네임이에요")
     }
     

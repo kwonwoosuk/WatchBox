@@ -13,9 +13,10 @@ class MainViewController: BaseViewController {
     let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
     let userName = UserDefaults.standard.string(forKey: "UserName")
     private let joinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
-    
-    
+
     private let profileSection = ProfileSectionView()
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -24,18 +25,8 @@ class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileSectionTapped))
-        profileSection.addGestureRecognizer(tapGesture)
-        profileSection.isUserInteractionEnabled = true
-        
-        
-        print(profileImageName) //  왜 nil일까...
-        navigationItem.title = "오늘의 영화"
-        navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+       
     }
-    
-    
     
     @objc
     private func profileSectionTapped() {
@@ -65,9 +56,7 @@ class MainViewController: BaseViewController {
             imageName: updatedProfileImageName ?? "profile_0",
             name: updatedUserName ?? "이름을 불러오지 못했습니다",
             joinedDate: updatedJoinedDate ?? Date()
-            
         )
-        
     }
     
     override func configureHierarchy() {
@@ -83,11 +72,14 @@ class MainViewController: BaseViewController {
     }
     
     override func configureView() {
-        profileSection.configure(
-            imageName: profileImageName ?? "profile_0",
-            name: userName ?? "이름을 불러오지 못했습니다",
-            joinedDate: joinedDate ?? Date())
+        updateProfileData()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileSectionTapped))
+        profileSection.addGestureRecognizer(tapGesture)
+        profileSection.isUserInteractionEnabled = true
         
+        navigationItem.title = "오늘의 영화"
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         
     }
 }

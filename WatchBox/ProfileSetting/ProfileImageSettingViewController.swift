@@ -17,10 +17,12 @@ class ProfileImageSettingViewController: BaseViewController {
     
     
     var selectedImageCell: ((String) -> Void)?
-    
     let profileImageView = UIImageView()
     var isPresenting: Bool?
-    
+    var selectedImage: UIImage?
+    private var selectedIndex: IndexPath?
+    // 인덱스 패스가 들어올건데 안들어올 수도 있어 자동 Ni;l초기화
+    // 역시 이렇게 생성하는건 뷰디드로드가 바로 안보여서 답답하다
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let spacing: CGFloat = 6
@@ -38,10 +40,6 @@ class ProfileImageSettingViewController: BaseViewController {
         return collectionView
     }()
 
-    var selectedImage: UIImage?
-    private var selectedIndex: IndexPath?
-    // 인덱스 패스가 들어올건데 안들어올 수도 있어 자동 Ni;l초기화
-    
     private let images = [
         "profile_0", "profile_1", "profile_2", "profile_3", "profile_4",
         "profile_5", "profile_6", "profile_7", "profile_8", "profile_9",
@@ -87,7 +85,6 @@ class ProfileImageSettingViewController: BaseViewController {
         super.viewDidLayoutSubviews()
         profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
         profileImageView.clipsToBounds = true
-        
     }
     
     override func configureView() {
@@ -100,7 +97,6 @@ class ProfileImageSettingViewController: BaseViewController {
         profileImageView.layer.borderColor = UIColor.accentBlue.cgColor
         profileImageView.layer.borderWidth = 3
     }
-    
 }
 
 extension ProfileImageSettingViewController: UICollectionViewDataSource, UICollectionViewDelegate {

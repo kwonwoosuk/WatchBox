@@ -35,25 +35,7 @@ class SettingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileSectionTapped))
-        profileSection.addGestureRecognizer(tapGesture)
-        profileSection.isUserInteractionEnabled = true
         
-        navigationItem.title = "설정"
-        navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-    }
-    
-    func updateProfileData() {
-        let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
-        let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
-        let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
-//        print(updatedProfileImageName, updatedUserName, updatedJoinedDate)
-        profileSection.configure(
-            imageName: updatedProfileImageName ?? "profile_0",
-            name: updatedUserName ?? "이름을 불러오지 못했습니다",
-            joinedDate: updatedJoinedDate ?? Date()
-        )
     }
     
     @objc
@@ -72,6 +54,17 @@ class SettingViewController: BaseViewController {
         
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
+    }
+    
+    func updateProfileData() {
+        let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
+        let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+        let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
+        profileSection.configure(
+            imageName: updatedProfileImageName ?? "profile_0",
+            name: updatedUserName ?? "이름을 불러오지 못했습니다",
+            joinedDate: updatedJoinedDate ?? Date()
+        )
     }
     
     override func configureHierarchy() {
@@ -102,6 +95,14 @@ class SettingViewController: BaseViewController {
         menuTableView.backgroundColor = .black
         menuTableView.separatorColor = .darkGray
         menuTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileSectionTapped))
+        profileSection.addGestureRecognizer(tapGesture)
+        profileSection.isUserInteractionEnabled = true
+        
+        navigationItem.title = "설정"
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
     
     override func configureDelegate() {
