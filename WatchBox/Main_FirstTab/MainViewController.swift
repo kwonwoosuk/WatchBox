@@ -90,7 +90,8 @@ class MainViewController: BaseViewController {
     private func createSearchHistoryCollectionView() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: 100, height: 44)
+        // 채현님이 알려주신 꿀정보 레이블에 맞춰서 자동 사이즈 조절쓰
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         return layout
     }
@@ -285,6 +286,11 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             let vc = MovieDetailViewController()
             vc.navigationItem.title = todayMovieList[indexPath.item].title
             vc.movieId = todayMovieList[indexPath.item].id
+            vc.releaseDate = todayMovieList[indexPath.item].releaseDate
+            vc.voteAverage = todayMovieList[indexPath.item].voteAverage
+            vc.overview = todayMovieList[indexPath.item].overview
+            vc.genreIDS = todayMovieList[indexPath.item].genreIDS
+            
             navigationController?.pushViewController(vc, animated: true)
         }
         

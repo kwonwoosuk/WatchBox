@@ -34,7 +34,7 @@ enum TMDBRequest {
             return url
                     
         case .image(let movieId):
-            guard let url = URL(string: baseURL + "movie/\(movieId)282631/images") else {
+            guard let url = URL(string: baseURL + "movie/\(movieId)/images") else {
                 fatalError("정보를 불러올 수 없습니다.")
             }
             return url

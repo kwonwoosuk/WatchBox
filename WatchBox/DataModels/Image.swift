@@ -9,7 +9,7 @@ import Foundation
 
 
 struct Images: Codable {
-    let id: Int
+    let id: Int?
     let backdrops: [Backdrop]
     let posters: [Posters]
 }

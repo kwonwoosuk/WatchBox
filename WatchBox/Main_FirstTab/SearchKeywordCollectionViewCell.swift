@@ -29,7 +29,7 @@ class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
     override func configureLayout() {
         containerView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(4)
-            make.height.equalTo(44)
+            make.height.equalTo(32)
         }
         
         searchKeyword.snp.makeConstraints { make in

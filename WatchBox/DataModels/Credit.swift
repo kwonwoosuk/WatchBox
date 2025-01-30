@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Case: Codable {
+struct Credit: Codable {
     let id: Int
     let cast: [Cast]
     

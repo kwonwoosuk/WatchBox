@@ -87,7 +87,7 @@ class SearchResultTableViewCell: BaseTableViewCell {
         releaseDateLabel.textAlignment = .left
     
     }
-    // 장르 아이디 레이블로 추가하는거 다시 생각해보기🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+    
     func configureData(data: SearchResult) {
         titleLabel.text = data.title
         if let date = data.releaseDate {

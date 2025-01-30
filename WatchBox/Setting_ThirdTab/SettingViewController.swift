@@ -140,7 +140,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
                 UserDefaults.standard.removeObject(forKey: "JoinDate")
                 UserDefaults.standard.removeObject(forKey: "UserName")
                 UserDefaults.standard.removeObject(forKey: "profileImageName")
-                
+                UserDefaults.standard.removeObject(forKey: "SearchHistory")
                 guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                       let window = windowScene.windows.first else { return }
                 window.rootViewController = UINavigationController(rootViewController: OnboardingViewController())
