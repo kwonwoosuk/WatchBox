@@ -101,7 +101,7 @@ class ProfileSectionView: BaseView {
     func configure(imageName: String, name: String, joinedDate: Date) {
         profileImageView.image = UIImage(named: imageName)
         userNameLabel.text = name
-        let joinedDate = joinedDate.signDateFormatting()
+        let joinedDate = joinedDate.dateFormatting()
         joinedDateLabel.text = "\(joinedDate) 가입"
     }
    

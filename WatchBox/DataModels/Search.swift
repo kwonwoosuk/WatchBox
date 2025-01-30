@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+// 서치에서 셀 선택했을대 image credit에 movieid가져가서 보여줘야함
 struct Search: Codable {
     let page: Int
     let results: [SearchResult]

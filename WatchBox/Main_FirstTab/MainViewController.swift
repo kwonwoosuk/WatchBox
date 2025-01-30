@@ -7,26 +7,38 @@
 
 import UIKit
 import SnapKit
-
+// fourthWeek
 class MainViewController: BaseViewController {
     
     let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
     let userName = UserDefaults.standard.string(forKey: "UserName")
     private let joinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
-
+    
     private let profileSection = ProfileSectionView()
     
     
+    let recentSearchKeywordLabel = UILabel()
+    let allClearButton = UIButton()
+    let emptyLabel = UILabel()
+    let todayMovieLabel = UILabel()
+    
+    var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
+    
+    lazy var searchHistoryCV = UICollectionView(frame: .zero, collectionViewLayout: createSearchHistoryCollectionView())
+    lazy var todayMovieCV = UICollectionView(frame: .zero, collectionViewLayout: createTodayMovieCollectionView())
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateProfileData()
+        updateSearchHistory()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        updateSearchHistory()
+        print(searchHistory)
     }
+    
     
     @objc
     private func profileSectionTapped() {
@@ -51,16 +63,40 @@ class MainViewController: BaseViewController {
         let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
         let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
         let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
-
+        
         profileSection.configure(
             imageName: updatedProfileImageName ?? "profile_0",
             name: updatedUserName ?? "이름을 불러오지 못했습니다",
             joinedDate: updatedJoinedDate ?? Date()
         )
     }
+    //최근 검색어 셀
+    private func createSearchHistoryCollectionView() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 100, height: 44)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        return layout
+    }
+    
+    // 오늘의 영화 셀
+    private func createTodayMovieCollectionView() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 200, height: 267)
+        layout.minimumInteritemSpacing = 4
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        return layout
+    }
     
     override func configureHierarchy() {
-        [profileSection].forEach{ view.addSubview($0) }
+        [profileSection,
+         recentSearchKeywordLabel,
+         allClearButton,
+         emptyLabel,
+         searchHistoryCV,
+         todayMovieLabel,
+         todayMovieCV].forEach{ view.addSubview($0) }
     }
     
     override func configureLayout() {
@@ -68,6 +104,38 @@ class MainViewController: BaseViewController {
             make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(150)
+        }
+        //최근 검색어 (제목)
+        recentSearchKeywordLabel.snp.makeConstraints { make in
+            make.top.equalTo(profileSection.snp.bottom).offset(16)
+            make.leading.equalToSuperview().offset(16)
+        }
+        // 전체삭제
+        allClearButton.snp.makeConstraints { make in
+            make.top.equalTo(profileSection.snp.bottom).offset(16)
+            make.trailing.equalToSuperview().offset(-16)
+        }
+        //최근 검색어 내역이 없습니다.
+        emptyLabel.snp.makeConstraints { make in
+            make.top.equalTo(recentSearchKeywordLabel.snp.bottom).offset(8)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(44)
+        }
+        // 최근 검색어 내역
+        searchHistoryCV.snp.makeConstraints { make in
+            make.top.equalTo(recentSearchKeywordLabel.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(44)
+        }
+        // 오늘의 영화 (제목)
+        todayMovieLabel.snp.makeConstraints { make in
+            make.top.equalTo(searchHistoryCV.snp.bottom).offset(8)
+            make.leading.equalToSuperview().offset(16)
+        }
+        // 오늘의 영화 셀
+        todayMovieCV.snp.makeConstraints { make in
+            make.top.equalTo(todayMovieLabel.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview()
         }
     }
     
@@ -80,6 +148,82 @@ class MainViewController: BaseViewController {
         navigationItem.title = "오늘의 영화"
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        let rightBarSearchButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(rightBarSearchButtonTapped))
+        rightBarSearchButton.tintColor = .accentBlue
+        navigationItem.rightBarButtonItem = rightBarSearchButton
+        
+        recentSearchKeywordLabel.text = "최근검색어"
+        recentSearchKeywordLabel.textColor = .white
+        recentSearchKeywordLabel.textAlignment = .left
+        recentSearchKeywordLabel.font = .systemFont(ofSize: 16, weight: .heavy)
+        
+        allClearButton.setTitle("전체삭제", for: .normal)
+        allClearButton.setTitleColor(.accentBlue, for: .normal)
+        allClearButton.setTitleColor(.normalGray, for: .highlighted)
+        allClearButton.titleLabel?.font = .systemFont(ofSize: 14)
+        allClearButton.addTarget(self, action: #selector(allClearButtonTapped), for: .touchUpInside)
+        
+        emptyLabel.text = "최근 검색어 내역이 없습니다."
+        emptyLabel.textColor = .darkGray
+        emptyLabel.textAlignment = .center
+        emptyLabel.font = .systemFont(ofSize: 12, weight: .heavy)
+        
+        todayMovieLabel.text = "오늘의 영화"
+        todayMovieLabel.textColor = .white
+        todayMovieLabel.textAlignment = .left
+        todayMovieLabel.font = .systemFont(ofSize: 16, weight: .heavy)
+    }
+    
+    private func updateSearchHistory() {
+        searchHistory = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
+        emptyLabel.isHidden = !searchHistory.isEmpty
+        searchHistoryCV.isHidden = searchHistory.isEmpty
+        searchHistoryCV.reloadData()
+    }
+
+    @objc
+    private func allClearButtonTapped() {
+        searchHistory.removeAll()
+        UserDefaults.standard.removeObject(forKey: "SearchHistory")
+        updateSearchHistory()
+    }
+    
+    override func configureDelegate() {
+        searchHistoryCV.delegate = self
+        searchHistoryCV.dataSource = self
+        searchHistoryCV.backgroundColor = .clear
+        searchHistoryCV.register(SearchKeywordCollectionViewCell.self, forCellWithReuseIdentifier: SearchKeywordCollectionViewCell.id)
+    }
+
+    @objc
+    func rightBarSearchButtonTapped() {
+        let vc = SearchResultViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+
+
+
+extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return searchHistory.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchKeywordCollectionViewCell.id, for: indexPath) as? SearchKeywordCollectionViewCell else { return UICollectionViewCell() }
+        
+        cell.configureKeyword(searchQuery: searchHistory[indexPath.item])
+        
+        cell.deleteButtonHandler = {
+            self.searchHistory.remove(at: indexPath.item)
+            UserDefaults.standard.set(self.searchHistory, forKey: "SearchHistory")
+            self.updateSearchHistory()
+        }
+        
+        return cell
         
     }
 }

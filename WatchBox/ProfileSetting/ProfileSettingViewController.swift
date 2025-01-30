@@ -55,7 +55,7 @@ final class ProfileSettingViewController: BaseViewController {
         isJoined = true
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
-        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName") // 처음에 랜덤을 안넘겨주니까 Nil로 초기화 되었던것
+        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName") 
         UserDefaults.standard.set(isJoined, forKey: "isJoined")
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -69,7 +69,6 @@ final class ProfileSettingViewController: BaseViewController {
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
         UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
-        
         profileUpdate?()
         dismiss(animated: true)
     }
