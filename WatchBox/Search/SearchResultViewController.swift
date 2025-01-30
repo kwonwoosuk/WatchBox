@@ -89,7 +89,7 @@ class SearchResultViewController: BaseViewController {
         resultTableView.prefetchDataSource = self
     }
     
-    private func callRequest(query: String, page: Int = 1) {
+    func callRequest(query: String, page: Int = 1) {
         NetworkManager.shared.callRequest(api: .search(searchQuery: query, page: page), type: Search.self) { response in
             
             if page == 1 {

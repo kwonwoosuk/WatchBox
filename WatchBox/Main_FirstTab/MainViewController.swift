@@ -226,4 +226,13 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         return cell
         
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = SearchResultViewController()
+        let selectedKeyword = searchHistory[indexPath.item]
+        vc.movieSearchBar.text = selectedKeyword
+        
+        vc.callRequest(query: selectedKeyword)
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
