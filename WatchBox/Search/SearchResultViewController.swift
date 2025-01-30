@@ -65,8 +65,9 @@ class SearchResultViewController: BaseViewController {
         movieSearchBar.searchTextField.textColor = .white
         movieSearchBar.barTintColor = .black
         movieSearchBar.searchTextField.backgroundColor = .darkGray
-        movieSearchBar.becomeFirstResponder()
-        
+        if movieSearchBar.text?.isEmpty == true {
+            movieSearchBar.becomeFirstResponder()
+        }
         resultLabel.text = "원하는 검색결과를 찾지못했습니다...🥲"
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 16, weight: .heavy)
@@ -164,5 +165,16 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = MovieDetailViewController()
+        vc.navigationItem.title = resultList[indexPath.row].title
+        vc.movieId = resultList[indexPath.row].id
+        navigationController?.pushViewController(vc, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     
 }
+
+    
+

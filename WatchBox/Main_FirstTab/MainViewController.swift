@@ -277,11 +277,14 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             let selectedKeyword = searchHistory[indexPath.item]
             vc.movieSearchBar.text = selectedKeyword
             
+            
             vc.callRequest(query: selectedKeyword)
             navigationController?.pushViewController(vc, animated: true)
             
         default:// 선택된 셀의 영화제목은 네비게이션 타이틀로 설정하고 선택된 셀의 영화Id로 imageapi credit api구성하기
             let vc = MovieDetailViewController()
+            vc.navigationItem.title = todayMovieList[indexPath.item].title
+            vc.movieId = todayMovieList[indexPath.item].id
             navigationController?.pushViewController(vc, animated: true)
         }
         
@@ -289,4 +292,4 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
     }
 }
-///MovieDetailViewController
+

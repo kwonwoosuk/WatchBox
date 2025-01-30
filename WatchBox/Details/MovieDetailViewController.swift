@@ -7,15 +7,38 @@
 
 import UIKit
 
-class MovieDetailViewController: UIViewController {
-
+class MovieDetailViewController: BaseViewController {
+    var movieId: Int?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-    
+        view.backgroundColor = .black
+//        print(movieId)
     }
     
+    
+    
+//    override func configureHierarchy() {
+//        <#code#>
+//    }
+//
+//    
+//    
+//    override func configureLayout() {
+//        <#code#>
+//    }
+//    
+    
+    override func configureView() {
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.tintColor = .accentBlue
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+    }
 
     
-
+    
+//    override func configureDelegate() {
+//        <#code#>
+//    }
 }
