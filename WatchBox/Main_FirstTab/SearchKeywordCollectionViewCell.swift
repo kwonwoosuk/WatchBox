@@ -20,13 +20,11 @@ class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
     let deleteButton = UIButton()
     
     var deleteButtonHandler: (() -> Void)?
-    
 
     override func configureHierarchy() {
         contentView.addSubview(containerView)
         [searchKeyword, deleteButton].forEach{ containerView.addSubview($0) }
     }
-    
     
     override func configureLayout() {
         containerView.snp.makeConstraints { make in
@@ -45,7 +43,6 @@ class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
             make.centerY.equalToSuperview()
             make.size.equalTo(20)
         }
-        
     }
     
     override func configureView() {
@@ -71,6 +68,4 @@ class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
     func configureKeyword(searchQuery: String) {
         searchKeyword.text = searchQuery
     }
-    
-    
 }

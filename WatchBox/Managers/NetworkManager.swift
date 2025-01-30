@@ -22,8 +22,8 @@ enum TMDBRequest {
 
     var endPoint: URL {
         switch self {
-        case .trending:
-            guard let url = URL(string: baseURL + "movie/day?language=ko-KR&page=1") else {
+        case .trending:// url틀려놓고 뻘짓했다 진짜 흐린눈
+            guard let url = URL(string: baseURL + "trending/movie/day?language=ko-KR&page=1") else {
                 fatalError("정보를 불러올 수 없습니다.")
             }
             return url
@@ -52,7 +52,7 @@ enum TMDBRequest {
     }
     
     var header: HTTPHeaders {
-        return [ "Authorization": ": Bearer \(Key.TMDB)" ]
+        return [ "Authorization": "Bearer \(Key.TMDB)" ]
     }
     
 }

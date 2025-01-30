@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 // fourthWeek
+// photoproject // topic
 class MainViewController: BaseViewController {
     
     let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
@@ -23,9 +24,11 @@ class MainViewController: BaseViewController {
     let todayMovieLabel = UILabel()
     
     var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
+    var todayMovieList: [Result] = []
     
     lazy var searchHistoryCV = UICollectionView(frame: .zero, collectionViewLayout: createSearchHistoryCollectionView())
     lazy var todayMovieCV = UICollectionView(frame: .zero, collectionViewLayout: createTodayMovieCollectionView())
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -35,10 +38,23 @@ class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        callRequset()
         updateSearchHistory()
         print(searchHistory)
     }
     
+    
+    func callRequset() {
+        NetworkManager.shared.callRequest(api: .trending, type: Trending.self) { response in
+            self.todayMovieList = response.results
+            dump(self.todayMovieList)
+            self.todayMovieCV.reloadData()
+        } failHandler: {
+            self.showAlert(title: "네트워크 통신에러", message: "정보를 불러오지 못했습니다 ", button: "확인") {
+                self.todayMovieCV.reloadData()
+            }
+        }
+    }
     
     @objc
     private func profileSectionTapped() {
@@ -79,13 +95,15 @@ class MainViewController: BaseViewController {
         return layout
     }
     
-    // 오늘의 영화 셀
+    // 레이아웃이 영 마음에 안든다...
     private func createTodayMovieCollectionView() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: 200, height: 267)
-        layout.minimumInteritemSpacing = 4
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        let deviceWidth = UIScreen.main.bounds.width
+        let cellWidth = deviceWidth * 2/3
+        let cellHeight = cellWidth * 1.5
+        layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         return layout
     }
     
@@ -134,8 +152,10 @@ class MainViewController: BaseViewController {
         }
         // 오늘의 영화 셀
         todayMovieCV.snp.makeConstraints { make in
-            make.top.equalTo(todayMovieLabel.snp.bottom).offset(8)
+            make.top.equalTo(todayMovieLabel.snp.bottom).offset(4)
             make.horizontalEdges.equalToSuperview()
+//            make.height.equalTo(UIScreen.main.bounds.width)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-8)
         }
     }
     
@@ -173,6 +193,9 @@ class MainViewController: BaseViewController {
         todayMovieLabel.textColor = .white
         todayMovieLabel.textAlignment = .left
         todayMovieLabel.font = .systemFont(ofSize: 16, weight: .heavy)
+        
+        
+        
     }
     
     private func updateSearchHistory() {
@@ -194,6 +217,11 @@ class MainViewController: BaseViewController {
         searchHistoryCV.dataSource = self
         searchHistoryCV.backgroundColor = .clear
         searchHistoryCV.register(SearchKeywordCollectionViewCell.self, forCellWithReuseIdentifier: SearchKeywordCollectionViewCell.id)
+        
+        todayMovieCV.delegate = self
+        todayMovieCV.dataSource = self
+        todayMovieCV.backgroundColor = .clear
+        todayMovieCV.register(TodayMovieCollectionViewCell.self, forCellWithReuseIdentifier: TodayMovieCollectionViewCell.id)
     }
 
     @objc
@@ -208,31 +236,57 @@ class MainViewController: BaseViewController {
 
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case self.searchHistoryCV:
+            return searchHistory.count
+        default:
+            return todayMovieList.count
+        }
         
-        return searchHistory.count
+        
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchKeywordCollectionViewCell.id, for: indexPath) as? SearchKeywordCollectionViewCell else { return UICollectionViewCell() }
-        
-        cell.configureKeyword(searchQuery: searchHistory[indexPath.item])
-        
-        cell.deleteButtonHandler = {
-            self.searchHistory.remove(at: indexPath.item)
-            UserDefaults.standard.set(self.searchHistory, forKey: "SearchHistory")
-            self.updateSearchHistory()
+        switch collectionView {
+        case self.searchHistoryCV:
+            
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchKeywordCollectionViewCell.id, for: indexPath) as? SearchKeywordCollectionViewCell else { return UICollectionViewCell() }
+            
+            cell.configureKeyword(searchQuery: searchHistory[indexPath.item])
+            
+            cell.deleteButtonHandler = {
+                self.searchHistory.remove(at: indexPath.item)
+                UserDefaults.standard.set(self.searchHistory, forKey: "SearchHistory")
+                self.updateSearchHistory()
+            }
+            return cell
+            
+        default:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayMovieCollectionViewCell.id, for: indexPath) as? TodayMovieCollectionViewCell else { return UICollectionViewCell() }
+            let data = todayMovieList[indexPath.item]
+            cell.configureData(data: data)
+            return cell
         }
-        
-        return cell
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = SearchResultViewController()
-        let selectedKeyword = searchHistory[indexPath.item]
-        vc.movieSearchBar.text = selectedKeyword
+        switch collectionView {
+        case searchHistoryCV:
+            let vc = SearchResultViewController()
+            let selectedKeyword = searchHistory[indexPath.item]
+            vc.movieSearchBar.text = selectedKeyword
+            
+            vc.callRequest(query: selectedKeyword)
+            navigationController?.pushViewController(vc, animated: true)
+            
+        default:// 선택된 셀의 영화제목은 네비게이션 타이틀로 설정하고 선택된 셀의 영화Id로 imageapi credit api구성하기
+            let vc = MovieDetailViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        }
         
-        vc.callRequest(query: selectedKeyword)
-        navigationController?.pushViewController(vc, animated: true)
+        
+        
     }
 }
+///MovieDetailViewController

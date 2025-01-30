@@ -76,7 +76,7 @@ class SearchResultTableViewCell: BaseTableViewCell {
         thumbnailImageView.contentMode = .scaleAspectFill
         thumbnailImageView.layer.cornerRadius = 12
         thumbnailImageView.clipsToBounds = true
-        
+        //영화제목 2줄까지 
         titleLabel.numberOfLines = 2
         titleLabel.font = .systemFont(ofSize: 14, weight: .heavy)
         titleLabel.textColor = .white
@@ -87,16 +87,21 @@ class SearchResultTableViewCell: BaseTableViewCell {
         releaseDateLabel.textAlignment = .left
     
     }
-    
+    // 장르 아이디 레이블로 추가하는거 다시 생각해보기🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
     func configureData(data: SearchResult) {
         titleLabel.text = data.title
-        
-        let releaseDate = String.formatDate(date: data.releaseDate)
-        releaseDateLabel.text = releaseDate
+        if let date = data.releaseDate {
+            let releaseDate = String.formatDate(date: date)
+            
+            releaseDateLabel.text = releaseDate
+        }
         
         let baseURL = "https://image.tmdb.org/t/p/original"
-        let url = URL(string: baseURL + data.posterPath)
-        thumbnailImageView.kf.setImage(with: url)
+        
+        if let posterURL = data.posterPath {
+            let url = URL(string: baseURL + posterURL)
+            thumbnailImageView.kf.setImage(with: url)
+        }
         
         genreArray.forEach { $0.isHidden = true }
         let genreIDs = Array(data.genreIDS.prefix(2)) // 앞에서 부터 두개 가져오기

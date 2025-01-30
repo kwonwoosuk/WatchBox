@@ -22,12 +22,12 @@ struct Search: Codable {
 
 struct SearchResult: Codable {
     let id: Int
-    let backdropPath: String
-    let overview: String
+    let backdropPath: String?
+    let overview: String?
     let genreIDS: [Int]
     let posterPath,
         releaseDate,
-        title: String
+        title: String?
     let voteAverage: Double
     
 

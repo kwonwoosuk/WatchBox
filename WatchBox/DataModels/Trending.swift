@@ -15,14 +15,14 @@ struct Trending: Codable {
 
 
 struct Result: Codable {
-    let backdropPath: String
+    let backdropPath: String?
     let id: Int
     let title: String
-    let overview: String
-    let posterPath: String
+    let overview: String?
+    let posterPath: String?
     let genreIDS: [Int]
-    let releaseDate: String
-    let voteAverage: Double
+    let releaseDate: String?
+    let voteAverage: Double?
     
     enum CodingKeys: String, CodingKey {
         case backdropPath = "backdrop_path"
