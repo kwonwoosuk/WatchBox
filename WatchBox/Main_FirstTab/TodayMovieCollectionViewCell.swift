@@ -20,7 +20,7 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
     let movieOverview = UILabel()
     // 나중에 좋아요 버튼만 교체
     let likebutton = UIButton()
-    
+        
     override func layoutSubviews() {
         super.layoutSubviews()
         posterImageView.layer.cornerRadius = 12

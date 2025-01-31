@@ -20,6 +20,7 @@ class MovieDetailViewController: BaseViewController {
     var voteAverage: Double?
     var overview: String?
     var genreIDS: [Int]?
+    let likebutton = UIButton()
     
     // MARK: - BackDrops
     lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())

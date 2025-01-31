@@ -16,6 +16,7 @@ class SearchResultTableViewCell: BaseTableViewCell {
     let titleLabel = UILabel()
     let releaseDateLabel = UILabel()
     var genreArray: [UILabel] = []
+    
     let likebutton = UIButton()
     
     override func configureHierarchy() {
