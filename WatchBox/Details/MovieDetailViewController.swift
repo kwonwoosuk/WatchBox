@@ -72,9 +72,7 @@ class MovieDetailViewController: BaseViewController {
     // MARK: - Poster
     private let posterLabel = UILabel()
     var posterList: [Posters] = []
-    
-    
-    
+    lazy var posterCV = UICollectionView(frame: .zero, collectionViewLayout: createPosterCollectionView())
     
     private func createBackdropsCollectionView() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
@@ -93,26 +91,26 @@ class MovieDetailViewController: BaseViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 180, height: 60)
-        layout.minimumLineSpacing = 0
+        layout.minimumLineSpacing = 16
         layout.minimumInteritemSpacing = 8
-        layout.sectionInset = UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 16)
+        layout.sectionInset = .zero
         return layout
     }
     
-    
-    
-    
-    
-    
+    private func createPosterCollectionView() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 110, height: 156)
+        layout.minimumLineSpacing = 8
+        layout.sectionInset = .zero
+        return layout
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         callRequest(movieId: movieId)
-        // 위치에 맞게 넣어주기만 하고 백드롭만 통신하면 될 것같다
-        //        print(movieId, releaseDate, voteAverage, overview, genreIDS)
-        
     }
-    //이걸로 poster구현후 poster까지 하면 될 것 같다 디스패치 그룹을 이용해서 callrequest로 통합해서 불러보자 id는 동일하니
+    
     func callRequest(movieId: Int?) {
         if let id = movieId {
             NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
@@ -120,9 +118,10 @@ class MovieDetailViewController: BaseViewController {
                 self.backDropsCV.reloadData()
                 
                 self.posterList = response.posters
+                self.posterCV.reloadData()
                 
             } failHandler: {
-                self.showAlert(title: "네트워크 통신에러", message: "다시 요청하시겠습니까?", button: "확인") {
+                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
                     self.backDropsCV.reloadData()
                 }
             }
@@ -132,10 +131,12 @@ class MovieDetailViewController: BaseViewController {
                 print(response.cast)
                 self.castCV.reloadData()
             } failHandler: {
-                self.showAlert(title: "네트워크 통신에러", message: "다시 요청하시겠습니까?", button: "확인") {
+                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
                     self.castCV.reloadData()
                 }
             }
+            
+            
             
         }
     }
@@ -150,15 +151,15 @@ class MovieDetailViewController: BaseViewController {
          synopsisMoreButton,
          castLabel,
          castCV,
-         posterLabel].forEach{ contentView.addSubview($0) }
+         posterLabel,
+         posterCV].forEach{ contentView.addSubview($0) }
     }
     
     
     
     override func configureLayout() {
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.horizontalEdges.bottom.equalToSuperview()
+            make.edges.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in
@@ -179,32 +180,50 @@ class MovieDetailViewController: BaseViewController {
             make.top.equalTo(backDropsCV.snp.bottom).offset(4)
             make.centerX.equalToSuperview()
             make.height.equalTo(44)
+            make.bottom.equalTo(synopsisLabel.snp.top)
         }
         
         synopsisLabel.snp.makeConstraints { make in
             make.top.equalTo(infolabelView.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
+            make.bottom.equalTo(overviews.snp.top)
+            
         }
         
         synopsisMoreButton.snp.makeConstraints { make in
             make.centerY.equalTo(synopsisLabel)
             make.trailing.equalToSuperview().offset(-16)
+            make.bottom.equalTo(overviews.snp.top)
         }
         
         overviews.snp.makeConstraints { make in
-            make.top.equalTo(synopsisLabel.snp.bottom).offset(8)
+            make.top.equalTo(synopsisLabel.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(16)
+            
         }
         
         castLabel.snp.makeConstraints { make in
-            make.top.equalTo(overviews.snp.bottom).offset(20)
+            make.top.equalTo(overviews.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
+            
         }
         
         castCV.snp.makeConstraints { make in
             make.top.equalTo(castLabel.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(145)
+        }
+        
+        posterLabel.snp.makeConstraints { make in
+            make.top.equalTo(castCV.snp.bottom).offset(16)
+            make.leading.equalToSuperview().offset(16)
+            make.bottom.equalTo(posterCV.snp.top)
+        }
+        
+        posterCV.snp.makeConstraints { make in
+            make.top.equalTo(posterLabel.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(180)
         }
         
     }
@@ -254,15 +273,28 @@ class MovieDetailViewController: BaseViewController {
         castCV.showsHorizontalScrollIndicator = false
         castCV.backgroundColor = .clear
         
+        
+        posterLabel.text = "Poster"
+        posterLabel.textColor = .white
+        posterLabel.textAlignment = .left
+        posterLabel.font = .systemFont(ofSize: 16, weight: .heavy)
+        
+        posterCV.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
+        posterCV.showsHorizontalScrollIndicator = false
+        posterCV.backgroundColor = .clear
+        
     }
     
     @objc
     func synopsisMoreButtonTapped() {
         synopsisMoreButton.isSelected.toggle()
-        if synopsisMoreButton.isSelected == true {
-            overviews.numberOfLines = 0
-        } else {
-            overviews.numberOfLines = 3
+        UIView.animate(withDuration: 0.3) {
+            if self.synopsisMoreButton.isSelected {
+                self.overviews.numberOfLines = 0
+            } else {
+                self.overviews.numberOfLines = 3
+            }
+            self.view.layoutIfNeeded()
         }
     }
     
@@ -278,6 +310,8 @@ class MovieDetailViewController: BaseViewController {
         backDropsCV.dataSource = self
         castCV.delegate = self
         castCV.dataSource = self
+        posterCV.delegate = self
+        posterCV.dataSource = self
     }
 }
 
@@ -293,11 +327,8 @@ extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewD
         case castCV:
             return castList.count
         default:
-            return 0
+            return posterList.count
         }
-        
-        
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -305,22 +336,25 @@ extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewD
         switch collectionView {
         case backDropsCV:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BackDropsCollectionViewCell.id, for: indexPath) as? BackDropsCollectionViewCell else { return UICollectionViewCell()}
-            
             let backdrop = backDrops[indexPath.item]
             let url = "https://image.tmdb.org/t/p/original" + backdrop.filePath
             if let url = URL(string: url) {
                 cell.backDropImageView.kf.setImage(with: url)
             }
             return cell
+            
         case castCV:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CastCollectionViewCell.id, for: indexPath) as? CastCollectionViewCell else { return UICollectionViewCell()}
             let data = castList[indexPath.item]
-            print(data.profilePath)
             cell.configureData(data: data)
             return cell
-        default:
-            return UICollectionViewCell()
             
+        default:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCollectionViewCell.id, for: indexPath) as? PosterCollectionViewCell else { return
+                UICollectionViewCell() }
+            let data = posterList[indexPath.item]
+            cell.configureData(data: data)
+            return cell
         }
     }
     
