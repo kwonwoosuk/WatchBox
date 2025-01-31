@@ -31,5 +31,13 @@ class BackDropsCollectionViewCell: BaseCollectionViewCell {
         backDropImageView.clipsToBounds = true
     }
     
+    func configureData(data: Backdrop) {
+        let baseURL = "https://image.tmdb.org/t/p/original"
+        
+        if let backDropURL = data.filePath {
+            let url = URL(string: baseURL + backDropURL)
+            backDropImageView.kf.setImage(with: url)
+        }
+    }
 
 }

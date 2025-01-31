@@ -34,11 +34,11 @@ class MainViewController: BaseViewController {
         super.viewWillAppear(animated)
         updateProfileData()
         updateSearchHistory()
+        callRequset()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        callRequset()
         updateSearchHistory()
         
     }
@@ -154,7 +154,6 @@ class MainViewController: BaseViewController {
         todayMovieCV.snp.makeConstraints { make in
             make.top.equalTo(todayMovieLabel.snp.bottom).offset(4)
             make.horizontalEdges.equalToSuperview()
-//            make.height.equalTo(UIScreen.main.bounds.width)
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-8)
         }
     }
@@ -187,7 +186,7 @@ class MainViewController: BaseViewController {
         emptyLabel.text = "최근 검색어 내역이 없습니다."
         emptyLabel.textColor = .darkGray
         emptyLabel.textAlignment = .center
-        emptyLabel.font = .systemFont(ofSize: 12, weight: .heavy)
+        emptyLabel.font = .systemFont(ofSize: 13, weight: .heavy)
         
         todayMovieLabel.text = "오늘의 영화"
         todayMovieLabel.textColor = .white

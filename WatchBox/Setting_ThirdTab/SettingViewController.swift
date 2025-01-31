@@ -59,11 +59,10 @@ class SettingViewController: BaseViewController {
     func updateProfileData() {
         let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
         let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
-        let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
-        profileSection.configure(
+        
+        profileSection.configureUpdate(
             imageName: updatedProfileImageName ?? "profile_0",
-            name: updatedUserName ?? "이름을 불러오지 못했습니다",
-            joinedDate: updatedJoinedDate ?? Date()
+            name: updatedUserName ?? "이름을 불러오지 못했습니다"
         )
     }
     
@@ -115,6 +114,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
         return settingList.count
         
     }

@@ -9,48 +9,17 @@ import UIKit
 import Alamofire
 import Kingfisher
 import SnapKit
-/*
- 백드롭 영역
- 1번째 컬렉션 뷰 백드롭 이미지 최대 5장
- 백드롭 하단에 개봉일, 별점 , 장르 이전뷰에서 끌고오기
- 레이블에 이미지를 넣어야하는데
- , 역사 이거 그냥 infolabel이라치고 한번에 넣으면 안되나?
- 그냥 이미지뷰 따로따로 하면 되잖아...
- uipagecontrlo
- 페이징 기능 있음
- 수평스크롤
- 
- 
- 시놉시스영역
- overview끌고 와야함
- 화면 진입시 최대 3줄까지 보여줌 Numberofline = 3
- more버튼 클릭시 전부 다 보여줌 Numberofline = 0
- 레이아웃도 맞춰서 밀어줘야할듯 어짜피 스크롤 되니까 괜찮다
- 
- 캐스트영역
- creditAPI로 불러오기
- 영화 케스트 전체를 보여주고 수평스크롤
- 프로필 이미지 뷰 profilePath
- 이름 name
- 영어일수도 있는 이름 character
- 
- 포스터영역
- 전체를 보여주고 수평스크롤
- */
 
 class MovieDetailViewController: BaseViewController {
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    
     var movieId: Int?
     var releaseDate: String?
     var voteAverage: Double?
     var overview: String?
     var genreIDS: [Int]?
-    
-    
     
     // MARK: - BackDrops
     lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())
@@ -112,33 +81,41 @@ class MovieDetailViewController: BaseViewController {
     }
     
     func callRequest(movieId: Int?) {
-        if let id = movieId {
-            NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
-                self.backDrops = response.backdrops
-                self.backDropsCV.reloadData()
-                
-                self.posterList = response.posters
-                self.posterCV.reloadData()
-                
-            } failHandler: {
-                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-                    self.backDropsCV.reloadData()
-                }
-            }
-            
-            NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { response in
-                self.castList = response.cast
-                print(response.cast)
-                self.castCV.reloadData()
-            } failHandler: {
-                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-                    self.castCV.reloadData()
-                }
-            }
-            
-            
-            
-        }
+       guard let id = movieId else { return }
+       
+       let group = DispatchGroup()
+       
+       group.enter()
+       NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
+           self.backDrops = response.backdrops
+           self.posterList = response.posters
+           group.leave()
+           
+       } failHandler: {
+           self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+               self.backDropsCV.reloadData()
+               self.posterCV.reloadData()
+           }
+           group.leave()
+       }
+       
+       group.enter()
+       NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { response in
+           self.castList = response.cast
+           group.leave()
+           
+       } failHandler: {
+           self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+               self.castCV.reloadData()
+           }
+           group.leave()
+       }
+       
+       group.notify(queue: .main) {
+           self.backDropsCV.reloadData()
+           self.posterCV.reloadData()
+           self.castCV.reloadData()
+       }
     }
     
     override func configureHierarchy() {
@@ -154,8 +131,6 @@ class MovieDetailViewController: BaseViewController {
          posterLabel,
          posterCV].forEach{ contentView.addSubview($0) }
     }
-    
-    
     
     override func configureLayout() {
         scrollView.snp.makeConstraints { make in
@@ -187,7 +162,6 @@ class MovieDetailViewController: BaseViewController {
             make.top.equalTo(infolabelView.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
             make.bottom.equalTo(overviews.snp.top)
-            
         }
         
         synopsisMoreButton.snp.makeConstraints { make in
@@ -199,13 +173,11 @@ class MovieDetailViewController: BaseViewController {
         overviews.snp.makeConstraints { make in
             make.top.equalTo(synopsisLabel.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(16)
-            
         }
         
         castLabel.snp.makeConstraints { make in
             make.top.equalTo(overviews.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
-            
         }
         
         castCV.snp.makeConstraints { make in
@@ -225,10 +197,8 @@ class MovieDetailViewController: BaseViewController {
             make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(180)
         }
-        
     }
-    
-    
+
     override func configureView() {
         let appearance = UINavigationBarAppearance()
         appearance.backgroundColor = .black
@@ -282,7 +252,6 @@ class MovieDetailViewController: BaseViewController {
         posterCV.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
         posterCV.showsHorizontalScrollIndicator = false
         posterCV.backgroundColor = .clear
-        
     }
     
     @objc
@@ -336,11 +305,8 @@ extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewD
         switch collectionView {
         case backDropsCV:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BackDropsCollectionViewCell.id, for: indexPath) as? BackDropsCollectionViewCell else { return UICollectionViewCell()}
-            let backdrop = backDrops[indexPath.item]
-            let url = "https://image.tmdb.org/t/p/original" + backdrop.filePath
-            if let url = URL(string: url) {
-                cell.backDropImageView.kf.setImage(with: url)
-            }
+            let data = backDrops[indexPath.item]
+            cell.configureData(data: data)
             return cell
             
         case castCV:
@@ -357,6 +323,4 @@ extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewD
             return cell
         }
     }
-    
-    
 }
