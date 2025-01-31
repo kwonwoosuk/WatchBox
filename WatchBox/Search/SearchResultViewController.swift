@@ -110,7 +110,6 @@ class SearchResultViewController: BaseViewController {
         } failHandler: {
             print("검색결과가 없습니다.")
         }
-        
     }
 }
 
@@ -136,7 +135,6 @@ extension SearchResultViewController: UISearchBarDelegate {
         searchHistory.insert(searchText, at: 0)
         UserDefaults.standard.set(searchHistory, forKey: "SearchHistory")
     }
-    
 }
 
 

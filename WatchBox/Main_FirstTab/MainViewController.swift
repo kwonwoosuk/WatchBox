@@ -194,9 +194,6 @@ class MainViewController: BaseViewController {
         todayMovieLabel.textColor = .white
         todayMovieLabel.textAlignment = .left
         todayMovieLabel.font = .systemFont(ofSize: 16, weight: .heavy)
-        
-        
-        
     }
     
     private func updateSearchHistory() {
@@ -243,9 +240,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         default:
             return todayMovieList.count
         }
-        
-        
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -293,9 +287,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             navigationController?.pushViewController(vc, animated: true)
         }
-        
-        
-        
     }
 }
 

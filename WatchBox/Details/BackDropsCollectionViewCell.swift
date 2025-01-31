@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 class BackDropsCollectionViewCell: BaseCollectionViewCell {
     
-    var backDropImageView = UIImageView()
+    static let id = "BackDropsCollectionViewCell"
     
+    var backDropImageView = UIImageView()
     
     override func configureHierarchy() {
         contentView.addSubview(backDropImageView)
@@ -26,7 +28,8 @@ class BackDropsCollectionViewCell: BaseCollectionViewCell {
     
     override func configureView() {
         backDropImageView.contentMode = .scaleAspectFill
+        backDropImageView.clipsToBounds = true
     }
     
-    
+
 }

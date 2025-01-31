@@ -17,7 +17,7 @@ class TabBarController: UITabBarController {
         super.viewDidLoad()
         configureTabBarController()
         setupTabBarAppearance()
-        
+//        setupNavigationBarAppearance()
         
     }
     
@@ -51,13 +51,22 @@ class TabBarController: UITabBarController {
     
     private func setupTabBarAppearance() { // 외형설정
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
+        appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .black
         tabBar.standardAppearance = appearance //  스크롤 엣지효과가 없을때
         tabBar.scrollEdgeAppearance = appearance // " 있을때
         tabBar.barTintColor = .black
         
         tabBar.tintColor = .accentBlue
+    }
+    
+    private func setupNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .black
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.tintColor = .black
     }
     
    
