@@ -108,7 +108,7 @@ extension ProfileImageSettingViewController: UICollectionViewDataSource, UIColle
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImageCollectionViewCell.id, for: indexPath) as! ProfileImageCollectionViewCell
         
-        cell.configure(with: images[indexPath.item])
+        cell.configure(imageName: images[indexPath.item])
 
         if indexPath == selectedIndex { //안들어 있을경우 모두 false
             cell.setSelected(true)

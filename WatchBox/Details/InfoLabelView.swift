@@ -50,7 +50,6 @@ class InfoLabelView: BaseView {
         starImageView.snp.makeConstraints { make in
             make.centerY.equalTo(calenderImageView)
             make.centerX.equalToSuperview()
-            
         }
         
         voteAverageLabel.snp.makeConstraints { make in

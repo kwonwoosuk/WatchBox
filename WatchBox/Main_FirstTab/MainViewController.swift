@@ -40,14 +40,13 @@ class MainViewController: BaseViewController {
         super.viewDidLoad()
         callRequset()
         updateSearchHistory()
-        print(searchHistory)
+        
     }
     
     
     func callRequset() {
         NetworkManager.shared.callRequest(api: .trending, type: Trending.self) { response in
             self.todayMovieList = response.results
-            dump(self.todayMovieList)
             self.todayMovieCV.reloadData()
         } failHandler: {
             self.showAlert(title: "네트워크 통신에러", message: "정보를 불러오지 못했습니다 ", button: "확인") {
@@ -220,6 +219,8 @@ class MainViewController: BaseViewController {
         todayMovieCV.dataSource = self
         todayMovieCV.backgroundColor = .clear
         todayMovieCV.register(TodayMovieCollectionViewCell.self, forCellWithReuseIdentifier: TodayMovieCollectionViewCell.id)
+        
+        
     }
 
     @objc

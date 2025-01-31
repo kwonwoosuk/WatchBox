@@ -49,23 +49,31 @@ class MovieDetailViewController: BaseViewController {
     var voteAverage: Double?
     var overview: String?
     var genreIDS: [Int]?
-   
+    
+    
+    
+    // MARK: - BackDrops
+    lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())
+    var backDrops: [Backdrop] = []
     
     // MARK: - synopsis -- more
     private let synopsisLabel = UILabel()
+    private let overviews = UILabel()
     private let synopsisMoreButton = UIButton()
-    
     
     // MARK: - infolabel
     var infolabelView = InfoLabelView()
     
-    // MARK: - cast
+    // MARK: - Cast
     private let castLabel = UILabel()
+    lazy var castCV = UICollectionView(frame: .zero, collectionViewLayout: createCastCollectionView())
+    var castList: [Cast] = []
     
-    // MARK: - poster
+    // MARK: - Poster
     private let posterLabel = UILabel()
-                        
-    lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())
+    var posterList: [Posters] = []
+    
+    
     
     
     private func createBackdropsCollectionView() -> UICollectionViewLayout {
@@ -81,34 +89,54 @@ class MovieDetailViewController: BaseViewController {
         return layout
     }
     
+    private func createCastCollectionView() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 180, height: 60)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 8
+        layout.sectionInset = UIEdgeInsets(top: 4, left: 0, bottom: 0, right: 16)
+        return layout
+    }
     
     
     
-    var backDrops: [Backdrop] = []
-    var casts: [Cast] = []
-    var posters: [Posters] = []
+    
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        callRequestBackdrop(movieId: movieId)
+        callRequest(movieId: movieId)
         // 위치에 맞게 넣어주기만 하고 백드롭만 통신하면 될 것같다
-//        print(movieId, releaseDate, voteAverage, overview, genreIDS)
+        //        print(movieId, releaseDate, voteAverage, overview, genreIDS)
         
     }
-    //이걸로 poster구현후 poster까지 하면 될 것 같다 
-    func callRequestBackdrop(movieId: Int?) {
+    //이걸로 poster구현후 poster까지 하면 될 것 같다 디스패치 그룹을 이용해서 callrequest로 통합해서 불러보자 id는 동일하니
+    func callRequest(movieId: Int?) {
         if let id = movieId {
             NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
                 self.backDrops = response.backdrops
                 self.backDropsCV.reloadData()
-                print(response.backdrops)
+                
+                self.posterList = response.posters
+                
             } failHandler: {
                 self.showAlert(title: "네트워크 통신에러", message: "다시 요청하시겠습니까?", button: "확인") {
                     self.backDropsCV.reloadData()
                 }
             }
+            
+            NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { response in
+                self.castList = response.cast
+                print(response.cast)
+                self.castCV.reloadData()
+            } failHandler: {
+                self.showAlert(title: "네트워크 통신에러", message: "다시 요청하시겠습니까?", button: "확인") {
+                    self.castCV.reloadData()
+                }
+            }
+            
         }
     }
     
@@ -118,8 +146,10 @@ class MovieDetailViewController: BaseViewController {
         [backDropsCV,
          infolabelView,
          synopsisLabel,
+         overviews,
          synopsisMoreButton,
          castLabel,
+         castCV,
          posterLabel].forEach{ contentView.addSubview($0) }
     }
     
@@ -151,6 +181,31 @@ class MovieDetailViewController: BaseViewController {
             make.height.equalTo(44)
         }
         
+        synopsisLabel.snp.makeConstraints { make in
+            make.top.equalTo(infolabelView.snp.bottom).offset(8)
+            make.leading.equalToSuperview().offset(16)
+        }
+        
+        synopsisMoreButton.snp.makeConstraints { make in
+            make.centerY.equalTo(synopsisLabel)
+            make.trailing.equalToSuperview().offset(-16)
+        }
+        
+        overviews.snp.makeConstraints { make in
+            make.top.equalTo(synopsisLabel.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        castLabel.snp.makeConstraints { make in
+            make.top.equalTo(overviews.snp.bottom).offset(20)
+            make.leading.equalToSuperview().offset(16)
+        }
+        
+        castCV.snp.makeConstraints { make in
+            make.top.equalTo(castLabel.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(145)
+        }
         
     }
     
@@ -172,33 +227,101 @@ class MovieDetailViewController: BaseViewController {
         backDropsCV.showsHorizontalScrollIndicator = false
         
         infolabelView.configureInfoLabel(date: releaseDate, vote: voteAverage, genres: genreIDS)
+        
+        synopsisLabel.text = "Synopsis"
+        synopsisLabel.font = .systemFont(ofSize: 16, weight: .heavy)
+        synopsisLabel.textAlignment = .left
+        synopsisLabel.textColor = .white
+        
+        synopsisMoreButton.setTitle("More", for: .normal)
+        synopsisMoreButton.setTitle("Hide", for: .selected)
+        synopsisMoreButton.setTitleColor(.accentBlue, for: .normal)
+        synopsisMoreButton.setTitleColor(.normalGray, for: .selected)
+        synopsisMoreButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .heavy)
+        synopsisMoreButton.addTarget(self, action: #selector(synopsisMoreButtonTapped), for: .touchUpInside)
+        configureSynopsis()
+        
+        overviews.font = .systemFont(ofSize: 14)
+        overviews.textAlignment = .left
+        overviews.textColor = .white
+        
+        castLabel.text = "Cast"
+        castLabel.textColor = .white
+        castLabel.textAlignment = .left
+        castLabel.font = .systemFont(ofSize: 16, weight: .heavy)
+        
+        castCV.register(CastCollectionViewCell.self, forCellWithReuseIdentifier: CastCollectionViewCell.id)
+        castCV.showsHorizontalScrollIndicator = false
+        castCV.backgroundColor = .clear
+        
+    }
+    
+    @objc
+    func synopsisMoreButtonTapped() {
+        synopsisMoreButton.isSelected.toggle()
+        if synopsisMoreButton.isSelected == true {
+            overviews.numberOfLines = 0
+        } else {
+            overviews.numberOfLines = 3
+        }
+    }
+    
+    func configureSynopsis() {
+        if let overview {
+            overviews.text = overview
+            overviews.numberOfLines = 3
+        }
     }
     
     override func configureDelegate() {
         backDropsCV.delegate = self
         backDropsCV.dataSource = self
+        castCV.delegate = self
+        castCV.dataSource = self
     }
 }
 
 extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if backDrops.count > 5 {
-            return 5
-        } else {
-            return backDrops.count
+        switch collectionView {
+        case backDropsCV:
+            if backDrops.count > 5 {
+                return 5
+            } else {
+                return backDrops.count
+            }
+        case castCV:
+            return castList.count
+        default:
+            return 0
         }
+        
+        
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BackDropsCollectionViewCell.id, for: indexPath) as? BackDropsCollectionViewCell else { return UICollectionViewCell()}
         
-        let backdrop = backDrops[indexPath.item]
-        let url = "https://image.tmdb.org/t/p/original" + backdrop.filePath
-        
-        if let url = URL(string: url) {
-            cell.backDropImageView.kf.setImage(with: url)
+        switch collectionView {
+        case backDropsCV:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BackDropsCollectionViewCell.id, for: indexPath) as? BackDropsCollectionViewCell else { return UICollectionViewCell()}
+            
+            let backdrop = backDrops[indexPath.item]
+            let url = "https://image.tmdb.org/t/p/original" + backdrop.filePath
+            if let url = URL(string: url) {
+                cell.backDropImageView.kf.setImage(with: url)
+            }
+            return cell
+        case castCV:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CastCollectionViewCell.id, for: indexPath) as? CastCollectionViewCell else { return UICollectionViewCell()}
+            let data = castList[indexPath.item]
+            print(data.profilePath)
+            cell.configureData(data: data)
+            return cell
+        default:
+            return UICollectionViewCell()
+            
         }
-        return cell
     }
     
     

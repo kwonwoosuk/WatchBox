@@ -32,7 +32,7 @@ class ProfileImageCollectionViewCell: BaseCollectionViewCell {
         profileImage.alpha = 0.5
     }
     
-    func configure(with imageName: String) {
+    func configure(imageName: String) {
         profileImage.image = UIImage(named: imageName)
     }
     
