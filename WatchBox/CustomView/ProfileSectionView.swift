@@ -89,13 +89,14 @@ class ProfileSectionView: BaseView {
         chevronButton.tintColor = .gray
         chevronButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         
-        likeCountButton.setTitle("n개의 무비박스 보관중", for: .normal)
         likeCountButton.titleLabel?.textAlignment = .center
         likeCountButton.setTitleColor( .white, for: .normal)
         likeCountButton.backgroundColor = .accentBlue
         likeCountButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .heavy)
         likeCountButton.layer.cornerRadius = 12
         likeCountButton.clipsToBounds = true
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLikeCount), name: NSNotification.Name("LikeStatusChanged"), object: nil)
     }
     
     func configure(imageName: String, name: String, joinedDate: Date) {
@@ -108,10 +109,12 @@ class ProfileSectionView: BaseView {
     func configureUpdate(imageName: String, name: String) {
         profileImageView.image = UIImage(named: imageName)
         userNameLabel.text = name
-        
-        
     }
    
+    @objc func updateLikeCount() {
+        let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        likeCountButton.setTitle("\(likedMovies.count)개의 무비박스 보관중", for: .normal)
+    }
         
     
 }

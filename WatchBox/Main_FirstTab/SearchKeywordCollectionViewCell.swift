@@ -10,15 +10,11 @@ import SnapKit
 
 class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
     
-    
     static let id = "SearchKeywordCollectionViewCell"
-    //backgroundView 키워드 사용할수 없당
-//    let backgroundView = UIView()
-    let containerView = UIView()
+    private let containerView = UIView()
     
-    let searchKeyword = UILabel()
-    let deleteButton = UIButton()
-    
+    private let searchKeyword = UILabel()
+    private let deleteButton = UIButton()
     var deleteButtonHandler: (() -> Void)?
 
     override func configureHierarchy() {
@@ -58,7 +54,10 @@ class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
         deleteButton.tintColor = .gray
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         
+        
     }
+    
+   
     
     @objc //  지우기 눌렀을때 서치 쿼리 가서 인덱스패스에 맞게 지워주기
     func deleteButtonTapped() {

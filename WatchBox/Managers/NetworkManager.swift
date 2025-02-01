@@ -8,8 +8,6 @@
 import Foundation
 import Alamofire
 
-// https://image.tmdb.org/t/p/original 위에 백드롭 패스로 이미지 불러올 수있음
-
 enum TMDBRequest {
     case trending
     case search(searchQuery: String, page: Int)
@@ -78,21 +76,5 @@ final class NetworkManager {
             }
         }
     }
-    
 }
 
-/*
- 
- 트랜딩 https://api.themoviedb.org/3/trending/movie/day?language=ko-KR&page=1
- 서치 https://api.themoviedb.org/3/search/movie?query=명량&include_adult=false&language=ko-KR&page=1
- 이미지 https://api.themoviedb.org/3/movie/282631/images
- 
- 이미지는 근데 "/3KB32UjT3iL6YziK7760YzSiOEI.jpg" 이런식으로 던져주는데 / 백드롭 포스터 둘다
- https://image.tmdb.org/t/p/original 얘랑 붙여야지 조회가 가능하던데
- 
- 크레딧 https://api.themoviedb.org/3/movie/282631/credits?language=ko-KR
- 
- 
- 
- 
- */

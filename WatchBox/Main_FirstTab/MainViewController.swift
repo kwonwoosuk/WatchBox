@@ -65,37 +65,35 @@ class MainViewController: BaseViewController {
         if let imageName = profileImageName{
             vc.profileImageView.image = UIImage(named: imageName)
         }
-        
         vc.profileUpdate = {
             self.updateProfileData()
         }
         
         let nav = UINavigationController(rootViewController: vc)
+        if let sheet = nav.sheetPresentationController {
+            sheet.prefersGrabberVisible = true
+        }
         present(nav, animated: true)
     }
     
     func updateProfileData() {
         let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
         let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
-        let updatedJoinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
         
-        profileSection.configure(
+        profileSection.configureUpdate(
             imageName: updatedProfileImageName ?? "profile_0",
-            name: updatedUserName ?? "이름을 불러오지 못했습니다",
-            joinedDate: updatedJoinedDate ?? Date()
+            name: updatedUserName ?? "이름을 불러오지 못했습니다"
         )
     }
-    //최근 검색어 셀
+    
     private func createSearchHistoryCollectionView() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        // 채현님이 알려주신 꿀정보 레이블에 맞춰서 자동 사이즈 조절쓰
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         return layout
     }
     
-    // 레이아웃이 영 마음에 안든다...
     private func createTodayMovieCollectionView() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -192,12 +190,23 @@ class MainViewController: BaseViewController {
         todayMovieLabel.textColor = .white
         todayMovieLabel.textAlignment = .left
         todayMovieLabel.font = .systemFont(ofSize: 16, weight: .heavy)
+        
+        profileSection.configure(imageName: profileImageName ?? "profile_0",
+                                 name: userName ?? "이름을 불러오지 못했습니다",
+                                 joinedDate: joinedDate ?? Date())
     }
+    
+    
     
     private func updateSearchHistory() {
         searchHistory = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
         emptyLabel.isHidden = !searchHistory.isEmpty
         searchHistoryCV.isHidden = searchHistory.isEmpty
+        if searchHistory.isEmpty {
+            navigationItem.title = "WatchBox"
+        } else {
+            navigationItem.title = "오늘의 영화"
+        }
         searchHistoryCV.reloadData()
     }
 
@@ -218,8 +227,6 @@ class MainViewController: BaseViewController {
         todayMovieCV.dataSource = self
         todayMovieCV.backgroundColor = .clear
         todayMovieCV.register(TodayMovieCollectionViewCell.self, forCellWithReuseIdentifier: TodayMovieCollectionViewCell.id)
-        
-        
     }
 
     @objc

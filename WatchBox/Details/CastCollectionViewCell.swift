@@ -21,7 +21,6 @@ class CastCollectionViewCell: BaseCollectionViewCell {
         [profileImageView,
          nameLabel,
          characterLabel].forEach { contentView.addSubview($0) }
-        
     }
     
     override func configureLayout() {

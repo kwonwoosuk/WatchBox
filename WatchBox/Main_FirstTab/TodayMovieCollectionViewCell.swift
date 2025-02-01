@@ -75,9 +75,38 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         movieOverview.textColor = .white
         movieOverview.textAlignment = .left
         
+        likeButton.setImage(UIImage(named: "heart"), for: .normal)
+        likeButton.tintColor = .normalGray
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        
+    }
+    
+    @objc func likeButtonTapped() {
+        guard let movieId = movieId else { return }
+        var likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        
+        if likedMovies.contains(movieId) {
+            likedMovies.removeAll { $0 == movieId }
+        } else {
+            likedMovies.append(movieId)
+        }
+        
+        UserDefaults.standard.set(likedMovies, forKey: "LikedMovies")
+        updateLikeButtonImage()
+        NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
+    }
+
+    func updateLikeButtonImage() {
+        guard let movieId = movieId else { return }
+        let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"
+        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
+        likeButton.tintColor = likedMovies.contains(movieId) ? .accentBlue : .normalGray
     }
     
     func configureData(data: Result) {
+        
+        movieId = data.id
         let baseURL = "https://image.tmdb.org/t/p/original"
         if let posterURL = data.posterPath{
             let url = URL(string: baseURL + posterURL)
@@ -85,6 +114,8 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         }
         movieTitle.text = data.title
         movieOverview.text = data.overview
+        
+        updateLikeButtonImage()
     }
     
     

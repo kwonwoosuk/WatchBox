@@ -38,7 +38,7 @@ final class ProfileSettingViewController: BaseViewController {
         
     }
     
-    @objc//초기 동그란 이미지 탭시
+    @objc
     private func profileImageViewTapped() {
         let profileSettingImageVC = ProfileImageSettingViewController()
         profileSettingImageVC.selectedImage = profileImageView.image

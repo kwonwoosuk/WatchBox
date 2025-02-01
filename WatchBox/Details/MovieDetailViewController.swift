@@ -9,7 +9,7 @@ import UIKit
 import Alamofire
 import Kingfisher
 import SnapKit
-
+//https://jihae-qu.tistory.com/88#ViewController%EC%99%80%20%EC%97%B0%EA%B2%B0-1
 class MovieDetailViewController: BaseViewController {
     
     private let scrollView = UIScrollView()
@@ -20,11 +20,12 @@ class MovieDetailViewController: BaseViewController {
     var voteAverage: Double?
     var overview: String?
     var genreIDS: [Int]?
-    let likebutton = UIButton()
+    let likeButton = UIButton()
     
     // MARK: - BackDrops
     lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())
     var backDrops: [Backdrop] = []
+    private let pageControl = UIPageControl()
     
     // MARK: - synopsis -- more
     private let synopsisLabel = UILabel()
@@ -79,6 +80,11 @@ class MovieDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         callRequest(movieId: movieId)
+        updateLikeButtonImage()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.post(name: NSNotification.Name("UpdateLikeButton"), object: nil)
     }
     
     func callRequest(movieId: Int?) {
@@ -90,6 +96,16 @@ class MovieDetailViewController: BaseViewController {
        NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
            self.backDrops = response.backdrops
            self.posterList = response.posters
+           
+           
+           
+           if self.backDrops.count > 5 {
+               self.pageControl.numberOfPages = 5
+           } else {
+               self.pageControl.numberOfPages = self.backDrops.count
+           }
+           
+           
            group.leave()
            
        } failHandler: {
@@ -123,6 +139,7 @@ class MovieDetailViewController: BaseViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         [backDropsCV,
+         pageControl,
          infolabelView,
          synopsisLabel,
          overviews,
@@ -150,6 +167,11 @@ class MovieDetailViewController: BaseViewController {
             let deviceWidth = UIScreen.main.bounds.width
             make.width.equalTo(deviceWidth)
             make.height.equalTo(250)
+        }
+        
+        pageControl.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(backDropsCV.snp.bottom).offset(-16)
         }
         
         infolabelView.snp.makeConstraints { make in
@@ -208,6 +230,9 @@ class MovieDetailViewController: BaseViewController {
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.tintColor = .accentBlue
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: likeButton)
+        likeButton.setImage(UIImage(named: "heart"), for: .normal)
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         
         scrollView.showsVerticalScrollIndicator = false
         
@@ -215,6 +240,13 @@ class MovieDetailViewController: BaseViewController {
         backDropsCV.isPagingEnabled = true
         backDropsCV.bounces = false
         backDropsCV.showsHorizontalScrollIndicator = false
+        pageControl.currentPageIndicatorTintColor = .accentBlue
+        pageControl.pageIndicatorTintColor = .normalGray
+        pageControl.currentPage = 0
+        pageControl.backgroundColor = .systemGray
+        pageControl.layer.cornerRadius = 12
+        pageControl.clipsToBounds = true
+        
         
         infolabelView.configureInfoLabel(date: releaseDate, vote: voteAverage, genres: genreIDS)
         
@@ -253,6 +285,31 @@ class MovieDetailViewController: BaseViewController {
         posterCV.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
         posterCV.showsHorizontalScrollIndicator = false
         posterCV.backgroundColor = .clear
+        
+        
+    }
+    
+    @objc func likeButtonTapped() {
+        guard let movieId = movieId else { return }
+        var likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        
+        if likedMovies.contains(movieId) {
+            likedMovies.removeAll { $0 == movieId }
+        } else {
+            likedMovies.append(movieId)
+        }
+        
+        UserDefaults.standard.set(likedMovies, forKey: "LikedMovies")
+        updateLikeButtonImage()
+        NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
+    }
+
+    func updateLikeButtonImage() {
+        guard let movieId = movieId else { return }
+        let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"
+        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
+        likeButton.tintColor = likedMovies.contains(movieId) ? .accentBlue : .normalGray
     }
     
     @objc
@@ -322,6 +379,13 @@ extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewD
             let data = posterList[indexPath.item]
             cell.configureData(data: data)
             return cell
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == backDropsCV {
+            let page = Int(round(scrollView.contentOffset.x / scrollView.bounds.width))
+            pageControl.currentPage = page
         }
     }
 }

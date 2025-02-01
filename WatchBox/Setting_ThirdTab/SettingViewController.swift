@@ -35,7 +35,7 @@ class SettingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        profileSection.updateLikeCount()
     }
     
     @objc
@@ -45,7 +45,7 @@ class SettingViewController: BaseViewController {
         
         vc.nicknameTextField.text = userName
         
-        if let imageName = profileImageName{
+        if let imageName = profileImageName {
             vc.profileImageView.image = UIImage(named: imageName)
         }
         vc.profileUpdate = {
@@ -53,6 +53,9 @@ class SettingViewController: BaseViewController {
         }
         
         let nav = UINavigationController(rootViewController: vc)
+        if let sheet = nav.sheetPresentationController {
+            sheet.prefersGrabberVisible = true
+        }
         present(nav, animated: true)
     }
     
@@ -140,6 +143,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
                 UserDefaults.standard.removeObject(forKey: "UserName")
                 UserDefaults.standard.removeObject(forKey: "profileImageName")
                 UserDefaults.standard.removeObject(forKey: "SearchHistory")
+                UserDefaults.standard.removeObject(forKey: "LikedMovies")
                 guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                       let window = windowScene.windows.first else { return }
                 window.rootViewController = UINavigationController(rootViewController: OnboardingViewController())

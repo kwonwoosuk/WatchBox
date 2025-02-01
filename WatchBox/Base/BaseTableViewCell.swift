@@ -11,13 +11,10 @@ class BaseTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         configureHierarchy()
         configureLayout()
         configureView()
     }
-    
-    
     
     @available(*,unavailable) //  * == 모든 플랫폼을 의미
     required init?(coder: NSCoder) {
@@ -26,6 +23,8 @@ class BaseTableViewCell: UITableViewCell {
     
     
     func configureHierarchy() {}
+    
     func configureLayout() {}
+    
     func configureView() {}
 }

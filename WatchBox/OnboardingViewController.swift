@@ -49,6 +49,7 @@ final class OnboardingViewController: BaseViewController {
             make.leading.equalTo(view.snp.leading).offset(8)
             make.trailing.equalTo(view.snp.trailing).offset(-8)
             make.height.equalTo(48)
+            
         }
     }
 

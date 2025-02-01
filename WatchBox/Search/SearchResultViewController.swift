@@ -22,8 +22,8 @@ class SearchResultViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
         resultLabel.isHidden = true
+        
     }
     
     private func updateUI() {
@@ -136,7 +136,6 @@ extension SearchResultViewController: UISearchBarDelegate {
         UserDefaults.standard.set(searchHistory, forKey: "SearchHistory")
     }
 }
-
 
 
 extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource ,UITableViewDataSourcePrefetching {

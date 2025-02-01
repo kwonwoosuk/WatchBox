@@ -16,6 +16,8 @@ class SearchResultTableViewCell: BaseTableViewCell {
     let titleLabel = UILabel()
     let releaseDateLabel = UILabel()
     var genreArray: [UILabel] = []
+    var movieId: Int?
+    let likeButton = UIButton()
     
     let likebutton = UIButton()
     
@@ -42,6 +44,11 @@ class SearchResultTableViewCell: BaseTableViewCell {
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
             make.height.equalTo(12)
+        }
+        
+        likeButton.snp.makeConstraints { make in
+            make.bottom.equalTo(contentView.snp.bottom).offset(-16)
+            make.trailing.equalTo(contentView.snp.trailing).offset(-16)
         }
         
         for i in 0...1 { // 두개까지...
@@ -87,9 +94,36 @@ class SearchResultTableViewCell: BaseTableViewCell {
         releaseDateLabel.textColor = .darkGray
         releaseDateLabel.textAlignment = .left
     
+        likeButton.setImage(UIImage(named: "heart"), for: .normal)
+        likeButton.tintColor = .normalGray
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func likeButtonTapped() {
+        guard let movieId = movieId else { return }
+        var likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        
+        if likedMovies.contains(movieId) {
+            likedMovies.removeAll { $0 == movieId }
+        } else {
+            likedMovies.append(movieId)
+        }
+        
+        UserDefaults.standard.set(likedMovies, forKey: "LikedMovies")
+        updateLikeButtonImage()
+        NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
+    }
+
+    @objc func updateLikeButtonImage() {
+        guard let movieId = movieId else { return }
+        let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"
+        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
+        likeButton.tintColor = likedMovies.contains(movieId) ? .accentBlue : .normalGray
     }
     
     func configureData(data: SearchResult) {
+        movieId = data.id
         titleLabel.text = data.title
         if let date = data.releaseDate {
             let releaseDate = String.formatDate(date: date)
@@ -114,6 +148,11 @@ class SearchResultTableViewCell: BaseTableViewCell {
                 label.isHidden = false
             }
         }
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateLikeButtonImage),
+                                                 name: NSNotification.Name("UpdateLikeButton"),
+                                                 object: nil)
+        updateLikeButtonImage()
     }
     
     
