@@ -13,7 +13,7 @@ class BackDropsCollectionViewCell: BaseCollectionViewCell {
     
     static let id = "BackDropsCollectionViewCell"
     
-    var backDropImageView = UIImageView()
+    private var backDropImageView = UIImageView()
     
     override func configureHierarchy() {
         contentView.addSubview(backDropImageView)

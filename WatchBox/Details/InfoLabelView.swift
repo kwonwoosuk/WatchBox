@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 class InfoLabelView: BaseView {
     
-    // MARK: - infolabel 🗓️ 2024-12-24 | ⭐︎ 8.0 | 🂓 액션, 스릴러
     private let backgroundView = UIView()
     private let calenderImageView = UIImageView()
     private let releasedateLabel = UILabel()
@@ -29,8 +28,6 @@ class InfoLabelView: BaseView {
          genreImageView,
          genresLabel,].forEach{ addSubview($0) }
     }
-    
-    
     
     override func configureLayout() {
         backgroundView.snp.makeConstraints { make in
@@ -66,9 +63,7 @@ class InfoLabelView: BaseView {
             make.centerY.equalTo(calenderImageView)
             make.leading.equalTo(genreImageView.snp.trailing).offset(4)
         }
-        
     }
-    
     
     override func configureView() {
         backgroundView.backgroundColor = .clear
@@ -96,7 +91,6 @@ class InfoLabelView: BaseView {
         genresLabel.font = .systemFont(ofSize: 14)
         genresLabel.textAlignment = .center
         genresLabel.textColor = .gray
-        
     }
     
     func configureInfoLabel(date: String?, vote: Double?, genres: [Int]?) {
@@ -124,7 +118,5 @@ class InfoLabelView: BaseView {
             }
             genresLabel.text = " \(genre)"
         }
-        
-        
     }
 }

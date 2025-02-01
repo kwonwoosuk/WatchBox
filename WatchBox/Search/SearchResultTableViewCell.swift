@@ -19,13 +19,12 @@ class SearchResultTableViewCell: BaseTableViewCell {
     var movieId: Int?
     let likeButton = UIButton()
     
-    let likebutton = UIButton()
     
     override func configureHierarchy() {
         [thumbnailImageView,
          titleLabel,
          releaseDateLabel,
-         likebutton].forEach{ contentView.addSubview($0) }
+         likeButton].forEach{ contentView.addSubview($0) }
     }
     
     override func configureLayout() {
@@ -99,7 +98,8 @@ class SearchResultTableViewCell: BaseTableViewCell {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
     
-    @objc func likeButtonTapped() {
+    @objc
+    private func likeButtonTapped() {
         guard let movieId = movieId else { return }
         var likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
         
@@ -114,7 +114,8 @@ class SearchResultTableViewCell: BaseTableViewCell {
         NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
     }
 
-    @objc func updateLikeButtonImage() {
+    @objc
+    private func updateLikeButtonImage() {
         guard let movieId = movieId else { return }
         let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
         let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"

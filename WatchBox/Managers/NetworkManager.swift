@@ -20,7 +20,7 @@ enum TMDBRequest {
 
     var endPoint: URL {
         switch self {
-        case .trending:// url틀려놓고 뻘짓했다 진짜 흐린눈
+        case .trending:
             guard let url = URL(string: baseURL + "trending/movie/day?language=ko-KR&page=1") else {
                 fatalError("정보를 불러올 수 없습니다.")
             }

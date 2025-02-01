@@ -9,7 +9,7 @@ import UIKit
 import Alamofire
 import Kingfisher
 import SnapKit
-//https://jihae-qu.tistory.com/88#ViewController%EC%99%80%20%EC%97%B0%EA%B2%B0-1
+
 class MovieDetailViewController: BaseViewController {
     
     private let scrollView = UIScrollView()
@@ -23,8 +23,8 @@ class MovieDetailViewController: BaseViewController {
     let likeButton = UIButton()
     
     // MARK: - BackDrops
-    lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())
-    var backDrops: [Backdrop] = []
+    private lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())
+    private var backDrops: [Backdrop] = []
     private let pageControl = UIPageControl()
     
     // MARK: - synopsis -- more
@@ -33,17 +33,17 @@ class MovieDetailViewController: BaseViewController {
     private let synopsisMoreButton = UIButton()
     
     // MARK: - infolabel
-    var infolabelView = InfoLabelView()
+    private var infolabelView = InfoLabelView()
     
     // MARK: - Cast
     private let castLabel = UILabel()
-    lazy var castCV = UICollectionView(frame: .zero, collectionViewLayout: createCastCollectionView())
-    var castList: [Cast] = []
+    private lazy var castCV = UICollectionView(frame: .zero, collectionViewLayout: createCastCollectionView())
+    private var castList: [Cast] = []
     
     // MARK: - Poster
     private let posterLabel = UILabel()
-    var posterList: [Posters] = []
-    lazy var posterCV = UICollectionView(frame: .zero, collectionViewLayout: createPosterCollectionView())
+    private var posterList: [Posters] = []
+    private lazy var posterCV = UICollectionView(frame: .zero, collectionViewLayout: createPosterCollectionView())
     
     private func createBackdropsCollectionView() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
@@ -82,57 +82,54 @@ class MovieDetailViewController: BaseViewController {
         callRequest(movieId: movieId)
         updateLikeButtonImage()
     }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.post(name: NSNotification.Name("UpdateLikeButton"), object: nil)
     }
     
-    func callRequest(movieId: Int?) {
-       guard let id = movieId else { return }
-       
-       let group = DispatchGroup()
-       
-       group.enter()
-       NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
-           self.backDrops = response.backdrops
-           self.posterList = response.posters
-           
-           
-           
-           if self.backDrops.count > 5 {
-               self.pageControl.numberOfPages = 5
-           } else {
-               self.pageControl.numberOfPages = self.backDrops.count
-           }
-           
-           
-           group.leave()
-           
-       } failHandler: {
-           self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-               self.backDropsCV.reloadData()
-               self.posterCV.reloadData()
-           }
-           group.leave()
-       }
-       
-       group.enter()
-       NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { response in
-           self.castList = response.cast
-           group.leave()
-           
-       } failHandler: {
-           self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-               self.castCV.reloadData()
-           }
-           group.leave()
-       }
-       
-       group.notify(queue: .main) {
-           self.backDropsCV.reloadData()
-           self.posterCV.reloadData()
-           self.castCV.reloadData()
-       }
+    private func callRequest(movieId: Int?) {
+        guard let id = movieId else { return }
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
+            self.backDrops = response.backdrops
+            self.posterList = response.posters
+            
+            if self.backDrops.count > 5 {
+                self.pageControl.numberOfPages = 5
+            } else {
+                self.pageControl.numberOfPages = self.backDrops.count
+            }
+            group.leave()
+            
+        } failHandler: {
+            self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+                self.backDropsCV.reloadData()
+                self.posterCV.reloadData()
+            }
+            group.leave()
+        }
+        
+        group.enter()
+        NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { response in
+            self.castList = response.cast
+            group.leave()
+            
+        } failHandler: {
+            self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+                self.castCV.reloadData()
+            }
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            self.backDropsCV.reloadData()
+            self.posterCV.reloadData()
+            self.castCV.reloadData()
+        }
     }
     
     override func configureHierarchy() {
@@ -221,7 +218,7 @@ class MovieDetailViewController: BaseViewController {
             make.height.equalTo(180)
         }
     }
-
+    
     override func configureView() {
         let appearance = UINavigationBarAppearance()
         appearance.backgroundColor = .black
@@ -246,7 +243,6 @@ class MovieDetailViewController: BaseViewController {
         pageControl.backgroundColor = .systemGray
         pageControl.layer.cornerRadius = 12
         pageControl.clipsToBounds = true
-        
         
         infolabelView.configureInfoLabel(date: releaseDate, vote: voteAverage, genres: genreIDS)
         
@@ -276,7 +272,6 @@ class MovieDetailViewController: BaseViewController {
         castCV.showsHorizontalScrollIndicator = false
         castCV.backgroundColor = .clear
         
-        
         posterLabel.text = "Poster"
         posterLabel.textColor = .white
         posterLabel.textAlignment = .left
@@ -285,11 +280,10 @@ class MovieDetailViewController: BaseViewController {
         posterCV.register(PosterCollectionViewCell.self, forCellWithReuseIdentifier: PosterCollectionViewCell.id)
         posterCV.showsHorizontalScrollIndicator = false
         posterCV.backgroundColor = .clear
-        
-        
     }
     
-    @objc func likeButtonTapped() {
+    @objc
+    private func likeButtonTapped() {
         guard let movieId = movieId else { return }
         var likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
         
@@ -303,8 +297,8 @@ class MovieDetailViewController: BaseViewController {
         updateLikeButtonImage()
         NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
     }
-
-    func updateLikeButtonImage() {
+    
+    private func updateLikeButtonImage() {
         guard let movieId = movieId else { return }
         let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
         let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"
@@ -313,7 +307,7 @@ class MovieDetailViewController: BaseViewController {
     }
     
     @objc
-    func synopsisMoreButtonTapped() {
+    private func synopsisMoreButtonTapped() {
         synopsisMoreButton.isSelected.toggle()
         UIView.animate(withDuration: 0.3) {
             if self.synopsisMoreButton.isSelected {
@@ -325,7 +319,7 @@ class MovieDetailViewController: BaseViewController {
         }
     }
     
-    func configureSynopsis() {
+    private func configureSynopsis() {
         if let overview {
             overviews.text = overview
             overviews.numberOfLines = 3

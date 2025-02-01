@@ -17,7 +17,7 @@ class ProfileImageSettingViewController: BaseViewController {
     
     
     var selectedImageCell: ((String) -> Void)?
-    let profileImageView = UIImageView()
+    private let profileImageView = UIImageView()
     var isPresenting: Bool?
     var selectedImage: UIImage?
     private var selectedIndex: IndexPath?

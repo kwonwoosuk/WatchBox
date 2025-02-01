@@ -33,9 +33,9 @@ final class ProfileSettingViewController: BaseViewController {
         }
         nicknameTextField.becomeFirstResponder()
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
     
     @objc
@@ -51,7 +51,7 @@ final class ProfileSettingViewController: BaseViewController {
     }
     
     @objc // 이름 가입일자 이미지 넘겨줌
-    func saveButtonTapped() {
+    private func saveButtonTapped() {
         isJoined = true
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
@@ -65,7 +65,7 @@ final class ProfileSettingViewController: BaseViewController {
     }
     
     @objc//우상단 저장버튼
-    func saveBarButtonTapped() {
+    private func saveBarButtonTapped() {
         UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
         UserDefaults.standard.set(Date(), forKey: "JoinDate")
         UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")

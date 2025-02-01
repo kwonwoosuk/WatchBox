@@ -15,11 +15,12 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
     static let id = "TodayMovieCollectionViewCell"
     
     
-    let posterImageView = UIImageView()
-    let movieTitle = UILabel()
-    let movieOverview = UILabel()
+    private let posterImageView = UIImageView()
+    private let movieTitle = UILabel()
+    private let movieOverview = UILabel()
     // 나중에 좋아요 버튼만 교체
-    let likebutton = UIButton()
+    private var movieId: Int?
+    private let likeButton = UIButton()
         
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -30,7 +31,7 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         [posterImageView,
          movieTitle,
          movieOverview,
-         likebutton].forEach{ contentView.addSubview($0) }
+         likeButton].forEach{ contentView.addSubview($0) }
     }
     
     
@@ -44,10 +45,10 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         movieTitle.snp.makeConstraints { make in
             make.top.equalTo(posterImageView.snp.bottom).offset(4)
             make.leading.equalToSuperview().inset(8)
-            make.trailing.equalTo(likebutton.snp.leading).offset(-8)
+            make.trailing.equalTo(likeButton.snp.leading).offset(-8)
         }
         
-        likebutton.snp.makeConstraints { make in
+        likeButton.snp.makeConstraints { make in
             make.centerY.equalTo(movieTitle)
             make.trailing.equalToSuperview().inset(8)
             make.size.equalTo(44)
@@ -58,9 +59,7 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
             make.horizontalEdges.equalToSuperview().inset(8)
             make.bottom.equalToSuperview().offset(-8)
         }
-        
     }
-    
     
     override func configureView() {
         posterImageView.contentMode = .scaleAspectFill
@@ -81,7 +80,8 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         
     }
     
-    @objc func likeButtonTapped() {
+    @objc
+    private func likeButtonTapped() {
         guard let movieId = movieId else { return }
         var likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
         
@@ -96,7 +96,7 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
     }
 
-    func updateLikeButtonImage() {
+    private func updateLikeButtonImage() {
         guard let movieId = movieId else { return }
         let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
         let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"

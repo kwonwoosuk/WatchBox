@@ -9,16 +9,10 @@ import UIKit
 
 class TabBarController: UITabBarController {
 
-    
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTabBarController()
         setupTabBarAppearance()
-//        setupNavigationBarAppearance()
-        
     }
     
     private func configureTabBarController() {
@@ -34,7 +28,6 @@ class TabBarController: UITabBarController {
         thirdTab.tabBarItem.title = "PROFILE"
         thirdTab.tabBarItem.image = UIImage(systemName: "person.crop.circle")
         
-        
         let firstNav = UINavigationController(rootViewController: firstTab)
         firstNav.view.backgroundColor = .black
         
@@ -44,10 +37,8 @@ class TabBarController: UITabBarController {
         let thirdNav = UINavigationController(rootViewController: thirdTab)
         thirdNav.view.backgroundColor = .black
         
-        
         setViewControllers([firstNav, secondNav, thirdNav], animated: true)
     }
-    
     
     private func setupTabBarAppearance() { // 외형설정
         let appearance = UITabBarAppearance()
@@ -59,18 +50,4 @@ class TabBarController: UITabBarController {
         
         tabBar.tintColor = .accentBlue
     }
-    
-    private func setupNavigationBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .black
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.tintColor = .black
-    }
-    
-   
-    
-    
-    
 }

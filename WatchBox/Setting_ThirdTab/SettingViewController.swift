@@ -9,11 +9,9 @@ import UIKit
 import SnapKit
 
 class SettingViewController: BaseViewController {
-    
-    
-    
-    let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
-    let userName = UserDefaults.standard.string(forKey: "UserName")
+
+    private let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+    private let userName = UserDefaults.standard.string(forKey: "UserName")
     private let joinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
     
     
@@ -106,13 +104,14 @@ class SettingViewController: BaseViewController {
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
-    
     override func configureDelegate() {
         menuTableView.delegate = self
         menuTableView.dataSource = self
     }
 
 }
+
+
 extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     

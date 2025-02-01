@@ -13,12 +13,12 @@ class PosterCollectionViewCell: BaseCollectionViewCell {
     
     static let id = "PosterCollectionViewCell"
     
-    var posterImageView = UIImageView()
+    private var posterImageView = UIImageView()
     
     override func configureHierarchy() {
         contentView.addSubview(posterImageView)
     }
-
+    
     override func configureLayout() {
         posterImageView.snp.makeConstraints { make in
             make.edges.equalTo(contentView)

@@ -11,23 +11,23 @@ import SnapKit
 // photoproject // topic
 class MainViewController: BaseViewController {
     
-    let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
-    let userName = UserDefaults.standard.string(forKey: "UserName")
+    private let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+    private let userName = UserDefaults.standard.string(forKey: "UserName")
     private let joinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
     
     private let profileSection = ProfileSectionView()
     
     
-    let recentSearchKeywordLabel = UILabel()
-    let allClearButton = UIButton()
-    let emptyLabel = UILabel()
-    let todayMovieLabel = UILabel()
+    private let recentSearchKeywordLabel = UILabel()
+    private let allClearButton = UIButton()
+    private let emptyLabel = UILabel()
+    private let todayMovieLabel = UILabel()
     
-    var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
-    var todayMovieList: [Result] = []
+    private var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
+    private var todayMovieList: [Result] = []
     
-    lazy var searchHistoryCV = UICollectionView(frame: .zero, collectionViewLayout: createSearchHistoryCollectionView())
-    lazy var todayMovieCV = UICollectionView(frame: .zero, collectionViewLayout: createTodayMovieCollectionView())
+    private lazy var searchHistoryCV = UICollectionView(frame: .zero, collectionViewLayout: createSearchHistoryCollectionView())
+    private lazy var todayMovieCV = UICollectionView(frame: .zero, collectionViewLayout: createTodayMovieCollectionView())
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -40,9 +40,8 @@ class MainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateSearchHistory()
-        
+        profileSection.updateLikeCount()
     }
-    
     
     func callRequset() {
         NetworkManager.shared.callRequest(api: .trending, type: Trending.self) { response in
@@ -62,7 +61,7 @@ class MainViewController: BaseViewController {
         
         vc.nicknameTextField.text = userName
         
-        if let imageName = profileImageName{
+        if let imageName = profileImageName {
             vc.profileImageView.image = UIImage(named: imageName)
         }
         vc.profileUpdate = {
@@ -162,7 +161,7 @@ class MainViewController: BaseViewController {
         profileSection.addGestureRecognizer(tapGesture)
         profileSection.isUserInteractionEnabled = true
         
-        navigationItem.title = "오늘의 영화"
+        navigationItem.title = "WatchBox"
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         
@@ -196,20 +195,13 @@ class MainViewController: BaseViewController {
                                  joinedDate: joinedDate ?? Date())
     }
     
-    
-    
     private func updateSearchHistory() {
         searchHistory = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
         emptyLabel.isHidden = !searchHistory.isEmpty
         searchHistoryCV.isHidden = searchHistory.isEmpty
-        if searchHistory.isEmpty {
-            navigationItem.title = "WatchBox"
-        } else {
-            navigationItem.title = "오늘의 영화"
-        }
         searchHistoryCV.reloadData()
     }
-
+    
     @objc
     private func allClearButtonTapped() {
         searchHistory.removeAll()
@@ -228,7 +220,7 @@ class MainViewController: BaseViewController {
         todayMovieCV.backgroundColor = .clear
         todayMovieCV.register(TodayMovieCollectionViewCell.self, forCellWithReuseIdentifier: TodayMovieCollectionViewCell.id)
     }
-
+    
     @objc
     func rightBarSearchButtonTapped() {
         let vc = SearchResultViewController()
@@ -279,11 +271,10 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             let selectedKeyword = searchHistory[indexPath.item]
             vc.movieSearchBar.text = selectedKeyword
             
-            
             vc.callRequest(query: selectedKeyword)
             navigationController?.pushViewController(vc, animated: true)
             
-        default:// 선택된 셀의 영화제목은 네비게이션 타이틀로 설정하고 선택된 셀의 영화Id로 imageapi credit api구성하기
+        default:
             let vc = MovieDetailViewController()
             vc.navigationItem.title = todayMovieList[indexPath.item].title
             vc.movieId = todayMovieList[indexPath.item].id
