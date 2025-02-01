@@ -208,13 +208,15 @@ final class ProfileSettingViewController: BaseViewController {
         nicknameTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
-    @objc func keyboardDismiss() {
+    @objc
+    private func keyboardDismiss() {
         view.endEditing(true)
     }
     
     
     
-    @objc func textFieldDidChange(_ textField: UITextField) {
+    @objc
+    private func textFieldDidChange(_ textField: UITextField) {
         guard let text = textField.text?.trimmingCharacters(in: .whitespaces), !text.isEmpty else {
             updateLabel(isValid: false, message: "공백은 사용할 수 없어요")
             return

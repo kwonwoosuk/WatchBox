@@ -17,7 +17,7 @@ enum TMDBRequest {
     var baseURL: String {
         return "https://api.themoviedb.org/3/"
     }
-
+    
     var endPoint: URL {
         switch self {
         case .trending:
@@ -30,7 +30,7 @@ enum TMDBRequest {
                 fatalError("파라미터 오류, 다시입력하세요.")
             }
             return url
-                    
+            
         case .image(let movieId):
             guard let url = URL(string: baseURL + "movie/\(movieId)/images") else {
                 fatalError("정보를 불러올 수 없습니다.")

@@ -158,6 +158,4 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
             }
             return indexPath
         }
-    
-    
 }

@@ -53,12 +53,8 @@ class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
         deleteButton.setTitleColor(.red, for: .highlighted)
         deleteButton.tintColor = .gray
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
-        
-        
     }
-    
-   
-    
+
     @objc //  지우기 눌렀을때 서치 쿼리 가서 인덱스패스에 맞게 지워주기
     func deleteButtonTapped() {
         deleteButtonHandler?()

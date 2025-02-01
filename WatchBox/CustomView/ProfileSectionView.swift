@@ -9,13 +9,12 @@ import UIKit
 import SnapKit
 
 class ProfileSectionView: BaseView {
-    //탭했을때 present설정뷰
+    
     private let backgroundView = UIView()
     
     private let profileImageView = UIImageView()
     private let userNameLabel = UILabel()
     private let joinedDateLabel = UILabel()
-    
     private let likeCountButton = UIButton()
     private let chevronButton = UIButton()
     
@@ -110,11 +109,12 @@ class ProfileSectionView: BaseView {
         profileImageView.image = UIImage(named: imageName)
         userNameLabel.text = name
     }
-   
-    @objc func updateLikeCount() {
+    
+    @objc
+    func updateLikeCount() {
         let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
         likeCountButton.setTitle("\(likedMovies.count)개의 무비박스 보관중", for: .normal)
     }
-        
+    
     
 }

@@ -21,7 +21,7 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
     // 나중에 좋아요 버튼만 교체
     private var movieId: Int?
     private let likeButton = UIButton()
-        
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         posterImageView.layer.cornerRadius = 12
@@ -95,7 +95,7 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         updateLikeButtonImage()
         NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
     }
-
+    
     private func updateLikeButtonImage() {
         guard let movieId = movieId else { return }
         let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []

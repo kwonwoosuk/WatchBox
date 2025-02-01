@@ -16,9 +16,9 @@ class SearchResultViewController: BaseViewController {
     let resultLabel = UILabel()
     var resultList: [SearchResult] = []
     
-    var page = 1
-    var totalPage = 0
-    var currentSearchBarText = ""
+    private  var page = 1
+    private var totalPage = 0
+    private var currentSearchBarText = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,15 +64,13 @@ class SearchResultViewController: BaseViewController {
         movieSearchBar.placeholder = "영화를 검색해보세요"
         movieSearchBar.searchTextField.textColor = .white
         movieSearchBar.barTintColor = .black
-//        movieSearchBar.searchTextField.backgroundColor = .darkGray
         if movieSearchBar.text?.isEmpty == true {
             movieSearchBar.becomeFirstResponder()
         }
-        resultLabel.text = "원하는 검색결과를 찾지못했습니다...🥲"
+        resultLabel.text = "원하는 검색결과를 찾지못했습니다"
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 16, weight: .heavy)
         resultLabel.textColor = .white
-        
         
         resultTableView.rowHeight = 120
         resultTableView.keyboardDismissMode = .onDrag

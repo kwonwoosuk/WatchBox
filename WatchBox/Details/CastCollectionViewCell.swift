@@ -43,10 +43,8 @@ class CastCollectionViewCell: BaseCollectionViewCell {
             make.trailing.equalToSuperview().offset(-8)
             make.bottom.equalToSuperview().offset(-4)
         }
-        
     }
-    
-    
+
     override func configureView() {
         contentView.backgroundColor = .clear
         profileImageView.contentMode = .scaleAspectFill
@@ -58,12 +56,10 @@ class CastCollectionViewCell: BaseCollectionViewCell {
         nameLabel.textAlignment = .left
         nameLabel.numberOfLines = 1
         
-        
         characterLabel.textColor = .darkGray
         characterLabel.textAlignment = .left
         characterLabel.font = .systemFont(ofSize: 12)
-        characterLabel.numberOfLines = 1
-        
+        characterLabel.numberOfLines = 1        
     }
     
     func configureData(data: Cast) {

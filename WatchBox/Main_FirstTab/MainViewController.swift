@@ -17,7 +17,6 @@ class MainViewController: BaseViewController {
     
     private let profileSection = ProfileSectionView()
     
-    
     private let recentSearchKeywordLabel = UILabel()
     private let allClearButton = UIButton()
     private let emptyLabel = UILabel()
@@ -227,8 +226,6 @@ class MainViewController: BaseViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
 }
-
-
 
 
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {

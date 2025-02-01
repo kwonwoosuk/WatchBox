@@ -10,7 +10,6 @@ import Lottie
 import SnapKit
 
 class SecondTabViewController: BaseViewController {
-
     
     private let animationImageView = LottieAnimationView(name: "travel")
     

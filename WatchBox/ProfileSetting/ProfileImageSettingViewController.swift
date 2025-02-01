@@ -15,14 +15,12 @@ import SnapKit
 
 class ProfileImageSettingViewController: BaseViewController {
     
-    
     var selectedImageCell: ((String) -> Void)?
     private let profileImageView = UIImageView()
     var isPresenting: Bool?
     var selectedImage: UIImage?
     private var selectedIndex: IndexPath?
     // 인덱스 패스가 들어올건데 안들어올 수도 있어 자동 Ni;l초기화
-    // 역시 이렇게 생성하는건 뷰디드로드가 바로 안보여서 답답하다
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let spacing: CGFloat = 6
@@ -39,7 +37,7 @@ class ProfileImageSettingViewController: BaseViewController {
         collectionView.register(ProfileImageCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImageCollectionViewCell.id)
         return collectionView
     }()
-
+    
     private let images = [
         "profile_0", "profile_1", "profile_2", "profile_3", "profile_4",
         "profile_5", "profile_6", "profile_7", "profile_8", "profile_9",
@@ -49,7 +47,6 @@ class ProfileImageSettingViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         profileImageView.image = selectedImage // 전 화면에서 랜덤선택되엇던 것
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -57,14 +54,13 @@ class ProfileImageSettingViewController: BaseViewController {
         if let selectedIndex { // shorthand 사용해봅니다
             selectedImageCell?(images[selectedIndex.item])
         } // 선택한 이미지 profilesettingview에 반영
-       
     }
-
+    
     override func configureHierarchy() {
         [ profileImageView, collectionView
         ].forEach{ view.addSubview($0)}
     }
-
+    
     override func configureLayout() {
         profileImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -109,7 +105,7 @@ extension ProfileImageSettingViewController: UICollectionViewDataSource, UIColle
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImageCollectionViewCell.id, for: indexPath) as! ProfileImageCollectionViewCell
         
         cell.configure(imageName: images[indexPath.item])
-
+        
         if indexPath == selectedIndex { //안들어 있을경우 모두 false
             cell.setSelected(true)
         } else {
