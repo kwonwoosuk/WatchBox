@@ -61,20 +61,20 @@ final class NetworkManager {
     
     private init() {}
     
-    func callRequest<T: Decodable>(api: TMDBRequest,
-                                   type: T.Type,
-                                   completionHandler: @escaping (T) -> Void,
-                                   failHandler: @escaping () -> Void
-    ) {
-        AF.request(api.endPoint, method: api.method, headers: api.header).responseDecodable(of: T.self) { response in
-            switch response.result{
-            case .success(let data):
-                completionHandler(data)
-            case .failure(let error):
-                print(error)
-                failHandler()
-            }
+    func callRequest<T: Decodable>(
+            api: TMDBRequest,
+            type: T.Type,
+            completion: @escaping (Result<T, AFError>) -> Void
+        ) {
+            AF.request(api.endPoint, method: api.method, headers: api.header)
+              .responseDecodable(of: T.self) { response in
+                  switch response.result {
+                  case .success(let data):
+                      completion(.success(data))
+                  case .failure(let error):
+                      completion(.failure(error))
+                  }
+              }
         }
-    }
 }
 

@@ -10,11 +10,11 @@ import Foundation
 
 struct Trending: Codable {
     let page: Int
-    let results: [Result]
+    let results: [TrendingResult]
 }
 
 
-struct Result: Codable {
+struct TrendingResult: Codable {
     let backdropPath: String?
     let id: Int
     let title: String

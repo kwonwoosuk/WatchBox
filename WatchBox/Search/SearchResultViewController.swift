@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 //fourthweek / kakaobook...
 class SearchResultViewController: BaseViewController {
-
+    
     
     let movieSearchBar = UISearchBar()
     lazy var resultTableView = UITableView()
@@ -39,7 +39,7 @@ class SearchResultViewController: BaseViewController {
     override func configureHierarchy() {
         [movieSearchBar, resultTableView, resultLabel].forEach { view.addSubview($0) }
     }
-
+    
     override func configureLayout() {
         movieSearchBar.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -60,7 +60,7 @@ class SearchResultViewController: BaseViewController {
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.tintColor = .accentBlue
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-    
+        
         movieSearchBar.placeholder = "영화를 검색해보세요"
         movieSearchBar.searchTextField.textColor = .white
         movieSearchBar.barTintColor = .black
@@ -89,24 +89,26 @@ class SearchResultViewController: BaseViewController {
     }
     
     func callRequest(query: String, page: Int = 1) {
-        NetworkManager.shared.callRequest(api: .search(searchQuery: query, page: page), type: Search.self) { response in
-            
-            if page == 1 {
-                self.resultList = response.results
-            } else {
-                self.resultList.append(contentsOf: response.results)
+        NetworkManager.shared.callRequest(api: .search(searchQuery: query, page: page), type: Search.self) { result in
+            switch result {
+            case .success(let response):
+                if page == 1 {
+                    self.resultList = response.results
+                } else {
+                    self.resultList.append(contentsOf: response.results)
+                }
+                
+                self.totalPage = response.totalPages
+                self.currentSearchBarText = query
+                
+                DispatchQueue.main.async {
+                    self.resultTableView.reloadData()
+                    self.updateUI()
+                }
+                
+            case .failure:
+                print("검색결과가 없습니다.")
             }
-            
-            self.totalPage = response.totalPages
-            self.currentSearchBarText = query
-            
-            DispatchQueue.main.async {
-                self.resultTableView.reloadData()
-                self.updateUI()
-            }
-            
-        } failHandler: {
-            print("검색결과가 없습니다.")
         }
     }
 }

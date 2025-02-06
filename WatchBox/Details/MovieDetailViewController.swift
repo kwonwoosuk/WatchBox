@@ -10,7 +10,7 @@ import Alamofire
 import Kingfisher
 import SnapKit
 
-class MovieDetailViewController: BaseViewController {
+final class MovieDetailViewController: BaseViewController {
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -90,39 +90,43 @@ class MovieDetailViewController: BaseViewController {
     
     private func callRequest(movieId: Int?) {
         guard let id = movieId else { return }
-        
         let group = DispatchGroup()
         
         group.enter()
-        NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { response in
-            self.backDrops = response.backdrops
-            self.posterList = response.posters
+        NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { result in
+            defer { group.leave() }
             
-            if self.backDrops.count > 5 {
-                self.pageControl.numberOfPages = 5
-            } else {
-                self.pageControl.numberOfPages = self.backDrops.count
+            switch result {
+            case .success(let response):
+                self.backDrops = response.backdrops
+                self.posterList = response.posters
+                
+                if self.backDrops.count > 5 {
+                    self.pageControl.numberOfPages = 5
+                } else {
+                    self.pageControl.numberOfPages = self.backDrops.count
+                }
+                
+            case .failure:
+                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+                    self.backDropsCV.reloadData()
+                    self.posterCV.reloadData()
+                }
             }
-            group.leave()
-            
-        } failHandler: {
-            self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-                self.backDropsCV.reloadData()
-                self.posterCV.reloadData()
-            }
-            group.leave()
         }
         
         group.enter()
-        NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { response in
-            self.castList = response.cast
-            group.leave()
+        NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { result in
+            defer { group.leave() }
             
-        } failHandler: {
-            self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-                self.castCV.reloadData()
+            switch result {
+            case .success(let response):
+                self.castList = response.cast
+            case .failure:
+                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+                    self.castCV.reloadData()
+                }
             }
-            group.leave()
         }
         
         group.notify(queue: .main) {

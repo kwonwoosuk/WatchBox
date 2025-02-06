@@ -104,7 +104,7 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
         likeButton.tintColor = likedMovies.contains(movieId) ? .accentBlue : .normalGray
     }
     
-    func configureData(data: Result) {
+    func configureData(data: TrendingResult) {
         
         movieId = data.id
         let baseURL = "https://image.tmdb.org/t/p/original"

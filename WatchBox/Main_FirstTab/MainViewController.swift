@@ -23,7 +23,7 @@ class MainViewController: BaseViewController {
     private let todayMovieLabel = UILabel()
     
     private var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
-    private var todayMovieList: [Result] = []
+    private var todayMovieList: [TrendingResult] = []
     
     private lazy var searchHistoryCV = UICollectionView(frame: .zero, collectionViewLayout: createSearchHistoryCollectionView())
     private lazy var todayMovieCV = UICollectionView(frame: .zero, collectionViewLayout: createTodayMovieCollectionView())
@@ -43,12 +43,15 @@ class MainViewController: BaseViewController {
     }
     
     func callRequset() {
-        NetworkManager.shared.callRequest(api: .trending, type: Trending.self) { response in
-            self.todayMovieList = response.results
-            self.todayMovieCV.reloadData()
-        } failHandler: {
-            self.showAlert(title: "네트워크 통신에러", message: "정보를 불러오지 못했습니다 ", button: "확인") {
+        NetworkManager.shared.callRequest(api: .trending, type: Trending.self) { result in
+            switch result {
+            case .success(let response):
+                self.todayMovieList = response.results
                 self.todayMovieCV.reloadData()
+            case .failure:
+                self.showAlert(title: "네트워크 통신에러", message: "정보를 불러오지 못했습니다", button: "확인") {
+                    self.todayMovieCV.reloadData()
+                }
             }
         }
     }
