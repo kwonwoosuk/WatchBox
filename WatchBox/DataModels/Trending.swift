@@ -8,13 +8,13 @@
 import Foundation
 
 
-struct Trending: Codable {
+struct Trending: Decodable {
     let page: Int
     let results: [TrendingResult]
 }
 
 
-struct TrendingResult: Codable {
+struct TrendingResult: Decodable {
     let backdropPath: String?
     let id: Int
     let title: String

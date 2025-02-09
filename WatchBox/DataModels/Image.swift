@@ -8,13 +8,13 @@
 import Foundation
 
 
-struct Images: Codable {
+struct Images: Decodable {
     let id: Int?
     let backdrops: [Backdrop]
     let posters: [Posters]
 }
 
-struct Backdrop: Codable {
+struct Backdrop: Decodable {
     let filePath: String?
     
     enum CodingKeys: String, CodingKey {
@@ -22,7 +22,7 @@ struct Backdrop: Codable {
     }
 }
 
-struct Posters: Codable {
+struct Posters: Decodable {
     let filePath: String?
     
     enum CodingKeys: String, CodingKey {

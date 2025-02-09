@@ -7,7 +7,7 @@
 
 import Foundation
 // 서치에서 셀 선택했을대 image credit에 movieid가져가서 보여줘야함
-struct Search: Codable {
+struct Search: Decodable {
     let page: Int
     let results: [SearchResult]
     let totalPages, totalResults: Int
@@ -20,7 +20,7 @@ struct Search: Codable {
 }
 
 
-struct SearchResult: Codable {
+struct SearchResult: Decodable {
     let id: Int
     let backdropPath: String?
     let overview: String?
