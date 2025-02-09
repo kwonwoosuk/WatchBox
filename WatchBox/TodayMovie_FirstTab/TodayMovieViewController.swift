@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 // fourthWeek
 // photoproject // topic
-class MainViewController: BaseViewController {
+class TodayMovieViewController: BaseViewController {
     
     private let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
     private let userName = UserDefaults.standard.string(forKey: "UserName")
@@ -231,7 +231,7 @@ class MainViewController: BaseViewController {
 }
 
 
-extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension TodayMovieViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case self.searchHistoryCV:

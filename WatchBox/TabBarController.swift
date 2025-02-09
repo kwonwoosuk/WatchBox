@@ -18,7 +18,7 @@ class TabBarController: UITabBarController {
     private func configureTabBarController() {
         tabBar.delegate = self
         
-        let firstTab = MainViewController()
+        let firstTab = TodayMovieViewController()
         firstTab.tabBarItem.image = UIImage(systemName: "popcorn")
         firstTab.tabBarItem.title  = "CINEMA"
         let secondTab = SecondTabViewController()

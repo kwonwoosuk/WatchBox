@@ -13,7 +13,7 @@ import SnapKit
 // 전부 회색보더로 -> 클릭한 버튼의 태그받아서 걔만 파랗게
 // 선택한것 제외하고 색상 변경
 
-class ProfileImageSettingViewController: BaseViewController {
+final class ProfileImageSettingViewController: BaseViewController {
     
     var selectedImageCell: ((String) -> Void)?
     private let profileImageView = UIImageView()

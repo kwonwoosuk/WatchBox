@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ProfileSectionView: BaseView {
+final class ProfileSectionView: BaseView {
     
     private let backgroundView = UIView()
     

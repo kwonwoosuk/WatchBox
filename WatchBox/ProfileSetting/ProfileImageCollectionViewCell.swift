@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ProfileImageCollectionViewCell: BaseCollectionViewCell {
+final class ProfileImageCollectionViewCell: BaseCollectionViewCell {
     
     static let id = "ProfileImageCollectionViewCell"
     private let profileImage = UIImageView()

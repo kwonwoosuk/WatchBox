@@ -215,7 +215,7 @@ final class ProfileSettingViewController: BaseViewController {
     
     
     
-    @objc
+    @objc // validation section!
     private func textFieldDidChange(_ textField: UITextField) {
         guard let text = textField.text?.trimmingCharacters(in: .whitespaces), !text.isEmpty else {
             updateLabel(isValid: false, message: "공백은 사용할 수 없어요")
