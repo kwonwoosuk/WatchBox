@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 import Kingfisher
-class SearchResultTableViewCell: BaseTableViewCell {
+final class SearchResultTableViewCell: BaseTableViewCell {
     
     static let id = "SearchResultTableViewCell"
     

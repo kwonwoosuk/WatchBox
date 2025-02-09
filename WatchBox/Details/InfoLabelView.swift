@@ -7,7 +7,7 @@
 
 import UIKit
 import SnapKit
-class InfoLabelView: BaseView {
+final class InfoLabelView: BaseView {
     
     private let backgroundView = UIView()
     private let calenderImageView = UIImageView()

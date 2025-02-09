@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SettingViewController: BaseViewController {
+final class SettingViewController: BaseViewController {
 
     private let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
     private let userName = UserDefaults.standard.string(forKey: "UserName")

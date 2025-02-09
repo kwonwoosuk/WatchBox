@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 //fourthweek / kakaobook...
-class SearchResultViewController: BaseViewController {
+final class SearchResultViewController: BaseViewController {
     
     
     let movieSearchBar = UISearchBar()

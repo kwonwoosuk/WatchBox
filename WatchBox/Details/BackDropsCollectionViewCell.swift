@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class BackDropsCollectionViewCell: BaseCollectionViewCell {
+final class BackDropsCollectionViewCell: BaseCollectionViewCell {
     
     static let id = "BackDropsCollectionViewCell"
     

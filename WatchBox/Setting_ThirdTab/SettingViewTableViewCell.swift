@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SettingViewTableViewCell: BaseTableViewCell {
+final class SettingViewTableViewCell: BaseTableViewCell {
 
     static let id = "SettingViewTableViewCell"
     let settingMenuLabel = UILabel()
