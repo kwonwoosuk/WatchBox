@@ -127,13 +127,13 @@ extension SearchResultViewController: UISearchBarDelegate {
     }
     
     private func saveSearchKeyword(searchText: String) {
-        var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
+        var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: UserDefaultsKeys.searchHistory.rawValue) ?? []
         // 중복된것 제거하고 새로운 검색어 맨앞에 추가
         if let duplicateIndex = searchHistory.firstIndex(of: searchText) {
             searchHistory.remove(at: duplicateIndex)
         }
         searchHistory.insert(searchText, at: 0)
-        UserDefaults.standard.set(searchHistory, forKey: "SearchHistory")
+        UserDefaults.standard.set(searchHistory, forKey: UserDefaultsKeys.searchHistory.rawValue)
     }
 }
 

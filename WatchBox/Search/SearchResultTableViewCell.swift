@@ -101,7 +101,7 @@ final class SearchResultTableViewCell: BaseTableViewCell {
     @objc
     private func likeButtonTapped() {
         guard let movieId = movieId else { return }
-        var likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        var likedMovies = UserDefaults.standard.array(forKey: UserDefaultsKeys.likedMovies.rawValue) as? [Int] ?? []
         
         if likedMovies.contains(movieId) {
             likedMovies.removeAll { $0 == movieId }
@@ -109,7 +109,7 @@ final class SearchResultTableViewCell: BaseTableViewCell {
             likedMovies.append(movieId)
         }
         
-        UserDefaults.standard.set(likedMovies, forKey: "LikedMovies")
+        UserDefaults.standard.set(likedMovies, forKey: UserDefaultsKeys.likedMovies.rawValue)
         updateLikeButtonImage()
         NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
     }
@@ -117,7 +117,7 @@ final class SearchResultTableViewCell: BaseTableViewCell {
     @objc
     private func updateLikeButtonImage() {
         guard let movieId = movieId else { return }
-        let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        let likedMovies = UserDefaults.standard.array(forKey: UserDefaultsKeys.likedMovies.rawValue) as? [Int] ?? []
         let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"
         likeButton.setImage(UIImage(systemName: imageName), for: .normal)
         likeButton.tintColor = likedMovies.contains(movieId) ? .accentBlue : .normalGray

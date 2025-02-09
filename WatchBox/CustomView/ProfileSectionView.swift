@@ -112,7 +112,7 @@ final class ProfileSectionView: BaseView {
     
     @objc
     func updateLikeCount() {
-        let likedMovies = UserDefaults.standard.array(forKey: "LikedMovies") as? [Int] ?? []
+        let likedMovies = UserDefaults.standard.array(forKey: UserDefaultsKeys.likedMovies.rawValue) as? [Int] ?? []
         likeCountButton.setTitle("\(likedMovies.count)개의 무비박스 보관중", for: .normal)
     }
     
