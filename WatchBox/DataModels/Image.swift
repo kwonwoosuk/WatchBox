@@ -14,7 +14,7 @@ struct Images: Decodable {
     let posters: [Posters]
 }
 
-struct Backdrop: Decodable {
+struct Backdrop: Decodable { 
     let filePath: String?
     
     enum CodingKeys: String, CodingKey {

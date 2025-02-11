@@ -9,10 +9,10 @@ import UIKit
 import SnapKit
 
 final class SettingViewController: BaseViewController {
-    
-    private let profileImageName = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileImageName.rawValue)
-    private let userName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue)
-    private let joinedDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.joinDate.rawValue) as? Date
+
+    private let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+    private let userName = UserDefaults.standard.string(forKey: "UserName")
+    private let joinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
     
     
     private let profileSection = ProfileSectionView()
@@ -58,8 +58,8 @@ final class SettingViewController: BaseViewController {
     }
     
     func updateProfileData() {
-        let updatedUserName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue)
-        let updatedProfileImageName = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileImageName.rawValue)
+        let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
+        let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
         
         profileSection.configureUpdate(
             imageName: updatedProfileImageName ?? "profile_0",
@@ -108,7 +108,7 @@ final class SettingViewController: BaseViewController {
         menuTableView.delegate = self
         menuTableView.dataSource = self
     }
-    
+
 }
 
 
@@ -116,7 +116,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
+
         return settingList.count
         
     }
@@ -135,15 +135,14 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 3 {
             showAlert(title: "탈퇴하기", message: "탈퇴하면 데이터가 모두 초기화 됩니다. 탈퇴하시겠습니까?", button: "확인") {
-                
-                // 앱의 모든 UserDefaults를 초기화
-                UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier ?? "")
-                //                UserDefaults.standard.removeObject(forKey: "isJoined")
-                //                UserDefaults.standard.removeObject(forKey: "JoinDate")
-                //                UserDefaults.standard.removeObject(forKey: "UserName")
-                //                UserDefaults.standard.removeObject(forKey: "profileImageName")
-                //                UserDefaults.standard.removeObject(forKey: "SearchHistory")
-                //                UserDefaults.standard.removeObject(forKey: "LikedMovies")
+    
+
+//                UserDefaults.standard.removeObject(forKey: "isJoined")
+//                UserDefaults.standard.removeObject(forKey: "JoinDate")
+//                UserDefaults.standard.removeObject(forKey: "UserName")
+//                UserDefaults.standard.removeObject(forKey: "profileImageName")
+//                UserDefaults.standard.removeObject(forKey: "SearchHistory")
+//                UserDefaults.standard.removeObject(forKey: "LikedMovies")
                 guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                       let window = windowScene.windows.first else { return }
                 window.rootViewController = UINavigationController(rootViewController: OnboardingViewController())
@@ -155,8 +154,8 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if indexPath.row != 3 {
-            return nil
+                return nil
+            }
+            return indexPath
         }
-        return indexPath
-    }
 }

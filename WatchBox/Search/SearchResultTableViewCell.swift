@@ -131,12 +131,9 @@ final class SearchResultTableViewCell: BaseTableViewCell {
             
             releaseDateLabel.text = releaseDate
         }
-        
-        let baseURL = "https://image.tmdb.org/t/p/original"
-        
-        if let posterURL = data.posterPath {
-            let url = URL(string: baseURL + posterURL)
-            thumbnailImageView.kf.setImage(with: url)
+    
+        if let posterURL = TMDBRequest.getImageURL(path: data.posterPath, size: TMDBRequest.ImageSize.poster) {
+            thumbnailImageView.kf.setImage(with: posterURL)
         }
         
         genreArray.forEach { $0.isHidden = true }

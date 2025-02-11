@@ -18,6 +18,24 @@ enum TMDBRequest {
         return "https://api.themoviedb.org/3/"
     }
     
+    var imageBaseUrl: String {
+        return "https://image.tmdb.org/t/p/original"
+    }
+    
+    enum ImageSize {
+        static let original = "original"
+        static let profile = "w45"
+        static let poster = "w185"
+        static let w500 = "w500"
+        static let w300 = "w300"
+        static let w200 = "w200"
+    }
+    
+    static func getImageURL(path: String?, size: String = ImageSize.original) -> URL? {
+        guard let path = path else { return nil }
+        return URL(string: "https://image.tmdb.org/t/p/\(size)\(path)")
+    }
+    
     var endPoint: URL {
         switch self {
         case .trending:
@@ -62,19 +80,19 @@ final class NetworkManager {
     private init() {}
     
     func callRequest<T: Decodable>(
-            api: TMDBRequest,
-            type: T.Type,
-            completion: @escaping (Result<T, AFError>) -> Void
-        ) {
-            AF.request(api.endPoint, method: api.method, headers: api.header)
-              .responseDecodable(of: T.self) { response in
-                  switch response.result {
-                  case .success(let data):
-                      completion(.success(data))
-                  case .failure(let error):
-                      completion(.failure(error))
-                  }
-              }
-        }
+        api: TMDBRequest,
+        type: T.Type,
+        completion: @escaping (Result<T, AFError>) -> Void
+    ) {
+        AF.request(api.endPoint, method: api.method, headers: api.header)
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let data):
+                    completion(.success(data))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+    }
 }
 

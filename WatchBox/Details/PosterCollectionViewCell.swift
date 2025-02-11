@@ -32,11 +32,8 @@ final class PosterCollectionViewCell: BaseCollectionViewCell {
     }
     
     func configureData(data: Posters) {
-        let baseURL = "https://image.tmdb.org/t/p/original"
-        
-        if let posterURL = data.filePath {
-            let url = URL(string: baseURL + posterURL)
-            posterImageView.kf.setImage(with: url)
+        if let posterURL = TMDBRequest.getImageURL(path: data.filePath, size: TMDBRequest.ImageSize.poster) {
+            posterImageView.kf.setImage(with: posterURL)
         }
     }
     

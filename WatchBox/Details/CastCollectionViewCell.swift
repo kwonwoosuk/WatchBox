@@ -63,10 +63,9 @@ final class CastCollectionViewCell: BaseCollectionViewCell {
     }
     
     func configureData(data: Cast) {
-        let baseURL = "https://image.tmdb.org/t/p/original"
-        if let profileURL = data.profilePath {
-            let url = URL(string: baseURL + profileURL)
-            profileImageView.kf.setImage(with: url)
+        
+        if let profileURL = TMDBRequest.getImageURL(path: data.profilePath, size: TMDBRequest.ImageSize.w200) {
+            profileImageView.kf.setImage(with: profileURL)
         } else {
             profileImageView.image = UIImage(systemName: "person.circle.fill")
             profileImageView.tintColor = .normalGray

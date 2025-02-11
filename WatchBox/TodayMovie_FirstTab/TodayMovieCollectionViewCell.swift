@@ -105,12 +105,9 @@ class TodayMovieCollectionViewCell: BaseCollectionViewCell {
     }
     
     func configureData(data: TrendingResult) {
-        
         movieId = data.id
-        let baseURL = "https://image.tmdb.org/t/p/original"
-        if let posterURL = data.posterPath{
-            let url = URL(string: baseURL + posterURL)
-            posterImageView.kf.setImage(with: url)
+        if let posterURL = TMDBRequest.getImageURL(path: data.posterPath, size: TMDBRequest.ImageSize.poster){
+            posterImageView.kf.setImage(with: posterURL)
         }
         movieTitle.text = data.title
         movieOverview.text = data.overview

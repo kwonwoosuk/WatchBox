@@ -13,5 +13,5 @@ enum UserDefaultsKeys: String {
     case userName
     case profileImageName
     case searchHistory
-    case likedMovies
+    case likedMovies = "LikedMovies"
 }
