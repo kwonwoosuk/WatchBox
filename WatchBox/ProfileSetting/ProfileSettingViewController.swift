@@ -53,10 +53,10 @@ final class ProfileSettingViewController: BaseViewController {
     @objc // 이름 가입일자 이미지 넘겨줌
     private func saveButtonTapped() {
         isJoined = true
-        UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
-        UserDefaults.standard.set(Date(), forKey: "JoinDate")
-        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName") 
-        UserDefaults.standard.set(isJoined, forKey: "isJoined")
+        UserDefaults.standard.set(nicknameTextField.text, forKey: UserDefaultsKeys.userName.rawValue)
+        UserDefaults.standard.set(Date(), forKey: UserDefaultsKeys.joinDate.rawValue)
+        UserDefaults.standard.set(selectedImageName, forKey: UserDefaultsKeys.profileImageName.rawValue)
+        UserDefaults.standard.set(isJoined, forKey: UserDefaultsKeys.isJoined.rawValue)
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
@@ -66,9 +66,9 @@ final class ProfileSettingViewController: BaseViewController {
     
     @objc//우상단 저장버튼
     private func saveBarButtonTapped() {
-        UserDefaults.standard.set(nicknameTextField.text, forKey: "UserName")
-        UserDefaults.standard.set(Date(), forKey: "JoinDate")
-        UserDefaults.standard.set(selectedImageName, forKey: "profileImageName")
+        UserDefaults.standard.set(nicknameTextField.text, forKey: UserDefaultsKeys.userName.rawValue)
+        UserDefaults.standard.set(Date(), forKey: UserDefaultsKeys.joinDate.rawValue)
+        UserDefaults.standard.set(selectedImageName, forKey: UserDefaultsKeys.profileImageName.rawValue)
         profileUpdate?()
         dismiss(animated: true)
     }
@@ -80,7 +80,7 @@ final class ProfileSettingViewController: BaseViewController {
     
     private func randomProfileImage() {
         if isPresenting {
-            if let savedImageName = UserDefaults.standard.string(forKey: "profileImageName") {
+            if let savedImageName = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileImageName.rawValue) {
                 profileImageView.image = UIImage(named: savedImageName)
                 selectedImageName = savedImageName
             }

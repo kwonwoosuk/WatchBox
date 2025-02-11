@@ -11,9 +11,9 @@ import SnapKit
 // photoproject // topic
 class TodayMovieViewController: BaseViewController {
     
-    private let profileImageName = UserDefaults.standard.string(forKey: "profileImageName")
-    private let userName = UserDefaults.standard.string(forKey: "UserName")
-    private let joinedDate = UserDefaults.standard.object(forKey: "JoinDate") as? Date
+    private let profileImageName = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileImageName.rawValue)
+    private let userName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue)
+    private let joinedDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.joinDate.rawValue) as? Date
     
     private let profileSection = ProfileSectionView()
     
@@ -78,8 +78,8 @@ class TodayMovieViewController: BaseViewController {
     }
     
     func updateProfileData() {
-        let updatedUserName = UserDefaults.standard.string(forKey: "UserName")
-        let updatedProfileImageName = UserDefaults.standard.string(forKey: "profileImageName")
+        let updatedUserName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue)
+        let updatedProfileImageName = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileImageName.rawValue)
         
         profileSection.configureUpdate(
             imageName: updatedProfileImageName ?? "profile_0",
@@ -198,7 +198,7 @@ class TodayMovieViewController: BaseViewController {
     }
     
     private func updateSearchHistory() {
-        searchHistory = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
+        searchHistory = UserDefaults.standard.stringArray(forKey: UserDefaultsKeys.searchHistory.rawValue) ?? []
         emptyLabel.isHidden = !searchHistory.isEmpty
         searchHistoryCV.isHidden = searchHistory.isEmpty
         searchHistoryCV.reloadData()
@@ -207,7 +207,7 @@ class TodayMovieViewController: BaseViewController {
     @objc
     private func allClearButtonTapped() {
         searchHistory.removeAll()
-        UserDefaults.standard.removeObject(forKey: "SearchHistory")
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.searchHistory.rawValue)
         updateSearchHistory()
     }
     
@@ -251,7 +251,7 @@ extension TodayMovieViewController: UICollectionViewDelegate, UICollectionViewDa
             
             cell.deleteButtonHandler = {
                 self.searchHistory.remove(at: indexPath.item)
-                UserDefaults.standard.set(self.searchHistory, forKey: "SearchHistory")
+                UserDefaults.standard.set(self.searchHistory, forKey: UserDefaultsKeys.searchHistory.rawValue)
                 self.updateSearchHistory()
             }
             return cell

@@ -8,10 +8,16 @@
 import Foundation
 
 enum UserDefaultsKeys: String {
-    case isJoined
-    case joinDate
-    case userName
-    case profileImageName
-    case searchHistory
+    case isJoined = "isJoined"
+    case joinDate = "JoinDate"
+    case userName = "UserName"
+    case profileImageName = "profileImageName"
+    case searchHistory = "SearchHistory"
     case likedMovies = "LikedMovies"
+    
+    static func resetDefaults() {
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+        }
+    }
 }

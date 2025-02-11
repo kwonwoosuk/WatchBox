@@ -136,7 +136,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.row == 3 {
             showAlert(title: "탈퇴하기", message: "탈퇴하면 데이터가 모두 초기화 됩니다. 탈퇴하시겠습니까?", button: "확인") {
     
-
+                UserDefaultsKeys.resetDefaults()
 //                UserDefaults.standard.removeObject(forKey: "isJoined")
 //                UserDefaults.standard.removeObject(forKey: "JoinDate")
 //                UserDefaults.standard.removeObject(forKey: "UserName")

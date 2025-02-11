@@ -18,10 +18,6 @@ enum TMDBRequest {
         return "https://api.themoviedb.org/3/"
     }
     
-    var imageBaseUrl: String {
-        return "https://image.tmdb.org/t/p/original"
-    }
-    
     enum ImageSize {
         static let original = "original"
         static let profile = "w45"
