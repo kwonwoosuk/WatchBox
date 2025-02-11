@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 //photoproject // topic
-class TodayMovieCollectionViewCell: BaseCollectionViewCell {
+final class TodayMovieCollectionViewCell: BaseCollectionViewCell {
     
     
     static let id = "TodayMovieCollectionViewCell"

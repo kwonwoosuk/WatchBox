@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
+final class SearchKeywordCollectionViewCell: BaseCollectionViewCell {
     
     static let id = "SearchKeywordCollectionViewCell"
     private let containerView = UIView()

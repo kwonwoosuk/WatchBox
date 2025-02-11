@@ -9,21 +9,17 @@ import UIKit
 import SnapKit
 // fourthWeek
 // photoproject // topic
-class TodayMovieViewController: BaseViewController {
-    
-    private let profileImageName = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileImageName.rawValue)
-    private let userName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue)
-    private let joinedDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.joinDate.rawValue) as? Date
+final class TodayMovieViewController: BaseViewController {
+
+    private let viewModel = TodayMovieViewModel()
     
     private let profileSection = ProfileSectionView()
-    
     private let recentSearchKeywordLabel = UILabel()
     private let allClearButton = UIButton()
     private let emptyLabel = UILabel()
     private let todayMovieLabel = UILabel()
-    
-    private var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: "SearchHistory") ?? []
-    private var todayMovieList: [TrendingResult] = []
+
+
     
     private lazy var searchHistoryCV = UICollectionView(frame: .zero, collectionViewLayout: createSearchHistoryCollectionView())
     private lazy var todayMovieCV = UICollectionView(frame: .zero, collectionViewLayout: createTodayMovieCollectionView())
@@ -31,29 +27,62 @@ class TodayMovieViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateProfileData()
-        updateSearchHistory()
-        callRequset()
+        viewModel.input.viewWillAppear.value = ()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateSearchHistory()
+        bindData()
         profileSection.updateLikeCount()
     }
     
-    func callRequset() {
-        NetworkManager.shared.callRequest(api: .trending, type: Trending.self) { result in
-            switch result {
-            case .success(let response):
-                self.todayMovieList = response.results
-                self.todayMovieCV.reloadData()
-            case .failure:
-                self.showAlert(title: "네트워크 통신에러", message: "정보를 불러오지 못했습니다", button: "확인") {
-                    self.todayMovieCV.reloadData()
+    private func bindData() {
+        viewModel.output.profile.bind { [weak self] profile in
+            if let profile {
+                self?.profileSection.configure(
+                    imageName: profile.imageName,
+                    name: profile.name,
+                    joinedDate: profile.date
+                )
+            }
+        }
+        
+        // 왜 껐다키면 사라지냐고요... 진짜 짜증나
+        viewModel.output.searchedHistory.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.searchHistoryCV.reloadData()
+            }
+        }
+        
+        // 검색 기록 유무에 따른 UI 업데이트
+        viewModel.output.isEmptySearchHistory.bind { [weak self] isEmpty in
+            self?.emptyLabel.isHidden = !isEmpty
+            self?.searchHistoryCV.isHidden = isEmpty
+        }
+        
+        viewModel.output.todayMovies.bind { [weak self] _ in
+            self?.todayMovieCV.reloadData()
+        }
+        
+        viewModel.output.showError.bind { [weak self] error in
+            if let error = error {
+                self?.showAlert(title: error.title, message: error.message, button: "확인") {
+                    self?.todayMovieCV.reloadData()
                 }
             }
         }
+    }
+    //--------------------------------
+//    private func updateSearchHistoryUI() {
+//        let searchHistory = viewModel.output.searchedHistory.value
+//        emptyLabel.isHidden = !searchHistory.isEmpty
+//        searchHistoryCV.isHidden = searchHistory.isEmpty
+//        searchHistoryCV.reloadData()
+//    }
+    
+    @objc
+    private func allClearButtonTapped() {
+        viewModel.input.allClearTapped.value = ()
     }
     
     @objc
@@ -61,13 +90,13 @@ class TodayMovieViewController: BaseViewController {
         let vc = ProfileSettingViewController()
         vc.isPresenting = true
         
-        vc.nicknameTextField.text = userName
-        
-        if let imageName = profileImageName {
-            vc.profileImageView.image = UIImage(named: imageName)
+        if let profile = viewModel.output.profile.value {
+            vc.nicknameTextField.text = profile.name
+            vc.profileImageView.image = UIImage(named: profile.imageName)
         }
-        vc.profileUpdate = {
-            self.updateProfileData()
+        
+        vc.profileUpdate = { [weak self] in
+            self?.viewModel.input.viewWillAppear.value = ()
         }
         
         let nav = UINavigationController(rootViewController: vc)
@@ -75,16 +104,6 @@ class TodayMovieViewController: BaseViewController {
             sheet.prefersGrabberVisible = true
         }
         present(nav, animated: true)
-    }
-    
-    func updateProfileData() {
-        let updatedUserName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue)
-        let updatedProfileImageName = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileImageName.rawValue)
-        
-        profileSection.configureUpdate(
-            imageName: updatedProfileImageName ?? "profile_0",
-            name: updatedUserName ?? "이름을 불러오지 못했습니다"
-        )
     }
     
     private func createSearchHistoryCollectionView() -> UICollectionViewLayout {
@@ -158,7 +177,6 @@ class TodayMovieViewController: BaseViewController {
     }
     
     override func configureView() {
-        updateProfileData()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileSectionTapped))
         profileSection.addGestureRecognizer(tapGesture)
         profileSection.isUserInteractionEnabled = true
@@ -191,25 +209,8 @@ class TodayMovieViewController: BaseViewController {
         todayMovieLabel.textColor = .white
         todayMovieLabel.textAlignment = .left
         todayMovieLabel.font = .systemFont(ofSize: 16, weight: .heavy)
-        
-        profileSection.configure(imageName: profileImageName ?? "profile_0",
-                                 name: userName ?? "이름을 불러오지 못했습니다",
-                                 joinedDate: joinedDate ?? Date())
     }
     
-    private func updateSearchHistory() {
-        searchHistory = UserDefaults.standard.stringArray(forKey: UserDefaultsKeys.searchHistory.rawValue) ?? []
-        emptyLabel.isHidden = !searchHistory.isEmpty
-        searchHistoryCV.isHidden = searchHistory.isEmpty
-        searchHistoryCV.reloadData()
-    }
-    
-    @objc
-    private func allClearButtonTapped() {
-        searchHistory.removeAll()
-        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.searchHistory.rawValue)
-        updateSearchHistory()
-    }
     
     override func configureDelegate() {
         searchHistoryCV.delegate = self
@@ -235,9 +236,9 @@ extension TodayMovieViewController: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case self.searchHistoryCV:
-            return searchHistory.count
+            return viewModel.output.searchedHistory.value.count
         default:
-            return todayMovieList.count
+            return viewModel.output.todayMovies.value.count
         }
     }
     
@@ -247,19 +248,19 @@ extension TodayMovieViewController: UICollectionViewDelegate, UICollectionViewDa
             
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchKeywordCollectionViewCell.id, for: indexPath) as? SearchKeywordCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureKeyword(searchQuery: searchHistory[indexPath.item])
+            cell.configureKeyword(searchQuery: viewModel.output.searchedHistory.value[indexPath.item])
             
-            cell.deleteButtonHandler = {
-                self.searchHistory.remove(at: indexPath.item)
-                UserDefaults.standard.set(self.searchHistory, forKey: UserDefaultsKeys.searchHistory.rawValue)
-                self.updateSearchHistory()
+            cell.deleteButtonHandler = { [weak self] in
+                self?.viewModel.input.deleteKeyword.value = indexPath.item
             }
+            
             return cell
             
         default:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayMovieCollectionViewCell.id, for: indexPath) as? TodayMovieCollectionViewCell else { return UICollectionViewCell() }
-            let data = todayMovieList[indexPath.item]
-            cell.configureData(data: data)
+            if let movie = viewModel.getSelectedMovie(at: indexPath.item) {
+                cell.configureData(data: movie)
+            }
             return cell
         }
     }
@@ -268,22 +269,25 @@ extension TodayMovieViewController: UICollectionViewDelegate, UICollectionViewDa
         switch collectionView {
         case searchHistoryCV:
             let vc = SearchResultViewController()
-            let selectedKeyword = searchHistory[indexPath.item]
-            vc.movieSearchBar.text = selectedKeyword
             
-            vc.callRequest(query: selectedKeyword)
+            if let keyword = viewModel.getSelectedKeyword(at: indexPath.item) {
+                vc.movieSearchBar.text = keyword
+                vc.callRequest(query: keyword)
+            }
             navigationController?.pushViewController(vc, animated: true)
             
         default:
-            let vc = MovieDetailViewController()
-            vc.navigationItem.title = todayMovieList[indexPath.item].title
-            vc.movieId = todayMovieList[indexPath.item].id
-            vc.releaseDate = todayMovieList[indexPath.item].releaseDate
-            vc.voteAverage = todayMovieList[indexPath.item].voteAverage
-            vc.overview = todayMovieList[indexPath.item].overview
-            vc.genreIDS = todayMovieList[indexPath.item].genreIDS
             
-            navigationController?.pushViewController(vc, animated: true)
+            if let movie = viewModel.getSelectedMovie(at: indexPath.item) {
+                let vc = MovieDetailViewController()
+                vc.navigationItem.title = movie.title
+                vc.movieId = movie.id
+                vc.releaseDate = movie.releaseDate
+                vc.voteAverage = movie.voteAverage
+                vc.overview = movie.overview
+                vc.genreIDS = movie.genreIDS
+                navigationController?.pushViewController(vc, animated: true)
+            }
         }
     }
 }

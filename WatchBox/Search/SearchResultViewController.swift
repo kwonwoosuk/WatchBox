@@ -7,29 +7,35 @@
 
 import UIKit
 import SnapKit
-//fourthweek / kakaobook...
+
 final class SearchResultViewController: BaseViewController {
     
     
-    let movieSearchBar = UISearchBar()
-    lazy var resultTableView = UITableView()
-    let resultLabel = UILabel()
-    var resultList: [SearchResult] = []
+    private let viewModel = SearchResultViewModel()
     
-    private  var page = 1
-    private var totalPage = 0
-    private var currentSearchBarText = ""
+    let movieSearchBar = UISearchBar()
+    private lazy var resultTableView = UITableView()
+    private let resultLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindData()
         resultLabel.isHidden = true
-        
     }
     
-    private func updateUI() {
-        resultLabel.isHidden = !resultList.isEmpty
-        resultTableView.isHidden = resultList.isEmpty
+    private func bindData() {
+        viewModel.output.searchResults.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.resultTableView.reloadData()
+            }
+        }
+        
+        viewModel.output.isEmptyResults.bind { [weak self] isEmpty in
+            self?.resultLabel.isHidden = !isEmpty
+            self?.resultTableView.isHidden = isEmpty
+        }
     }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -88,28 +94,8 @@ final class SearchResultViewController: BaseViewController {
         resultTableView.prefetchDataSource = self
     }
     
-    func callRequest(query: String, page: Int = 1) {
-        NetworkManager.shared.callRequest(api: .search(searchQuery: query, page: page), type: Search.self) { result in
-            switch result {
-            case .success(let response):
-                if page == 1 {
-                    self.resultList = response.results
-                } else {
-                    self.resultList.append(contentsOf: response.results)
-                }
-                
-                self.totalPage = response.totalPages
-                self.currentSearchBarText = query
-                
-                DispatchQueue.main.async {
-                    self.resultTableView.reloadData()
-                    self.updateUI()
-                }
-                
-            case .failure:
-                print("검색결과가 없습니다.")
-            }
-        }
+    func callRequest(query: String) {
+        viewModel.input.searchButtonClicked.value = query
     }
 }
 
@@ -122,18 +108,8 @@ extension SearchResultViewController: UISearchBarDelegate {
         
         callRequest(query: searchText)
         
-        saveSearchKeyword(searchText: searchText)
+        viewModel.input.searchButtonClicked.value = searchText
         searchBar.resignFirstResponder()
-    }
-    
-    private func saveSearchKeyword(searchText: String) {
-        var searchHistory: [String] = UserDefaults.standard.stringArray(forKey: UserDefaultsKeys.searchHistory.rawValue) ?? []
-        // 중복된것 제거하고 새로운 검색어 맨앞에 추가
-        if let duplicateIndex = searchHistory.firstIndex(of: searchText) {
-            searchHistory.remove(at: duplicateIndex)
-        }
-        searchHistory.insert(searchText, at: 0)
-        UserDefaults.standard.set(searchHistory, forKey: UserDefaultsKeys.searchHistory.rawValue)
     }
 }
 
@@ -141,37 +117,35 @@ extension SearchResultViewController: UISearchBarDelegate {
 extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource ,UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         for item in indexPaths {
-            if resultList.count - 2 == item.row && page <= totalPage {
-                page += 1
-                callRequest(query: currentSearchBarText, page: page)
-            }
+            viewModel.input.prefetchRows.value = item.row
         }
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return resultList.count
+        return viewModel.output.searchResults.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultTableViewCell.id, for: indexPath) as? SearchResultTableViewCell else { return UITableViewCell() }
         
-        let data = resultList[indexPath.row]
-        cell.configureData(data: data)
+        if let movie = viewModel.getMovie(at: indexPath.row) {
+            cell.configureData(data: movie)
+        }
         cell.backgroundColor = .clear
-        return cell
-    }
+        return cell    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let movie = viewModel.getMovie(at: indexPath.row) else { return }
+        
         let vc = MovieDetailViewController()
-        vc.navigationItem.title = resultList[indexPath.row].title
-        vc.movieId = resultList[indexPath.row].id
-        vc.releaseDate = resultList[indexPath.row].releaseDate
-        vc.voteAverage = resultList[indexPath.row].voteAverage
-        vc.overview = resultList[indexPath.row].overview
-        vc.genreIDS = resultList[indexPath.row].genreIDS
-        
-        
+        vc.navigationItem.title = movie.title
+        vc.movieId = movie.id
+        vc.releaseDate = movie.releaseDate
+        vc.voteAverage = movie.voteAverage
+        vc.overview = movie.overview
+        vc.genreIDS = movie.genreIDS
         
         navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
@@ -180,5 +154,5 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
     
 }
 
-    
+
 
