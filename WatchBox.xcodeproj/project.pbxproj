@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4D55581D2D4D62C7001F2422 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4D55581C2D4D62C7001F2422 /* Lottie */; };
+		4D8B13BD2D5D2F4F00E85AD4 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B13BC2D5D2F4F00E85AD4 /* README.md */; };
 		4DA4483C2D44F3DA00ACE4CD /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 4DA4483B2D44F3DA00ACE4CD /* .gitignore */; };
 		4DA44A692D46712700ACE4CD /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4DA44A682D46712700ACE4CD /* Kingfisher */; };
 		4DA44A6C2D46713100ACE4CD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4DA44A6B2D46713100ACE4CD /* Alamofire */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D8B13BC2D5D2F4F00E85AD4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4DA448062D43C05700ACE4CD /* WatchBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WatchBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DA4483B2D44F3DA00ACE4CD /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,6 +60,7 @@
 		4DA447FD2D43C05700ACE4CD = {
 			isa = PBXGroup;
 			children = (
+				4D8B13BC2D5D2F4F00E85AD4 /* README.md */,
 				4DA4483B2D44F3DA00ACE4CD /* .gitignore */,
 				4DA448082D43C05700ACE4CD /* WatchBox */,
 				4DA448072D43C05700ACE4CD /* Products */,
@@ -146,6 +149,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D8B13BD2D5D2F4F00E85AD4 /* README.md in Resources */,
 				4DA4483C2D44F3DA00ACE4CD /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
