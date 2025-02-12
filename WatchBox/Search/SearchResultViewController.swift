@@ -134,7 +134,8 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             cell.configureData(data: movie)
         }
         cell.backgroundColor = .clear
-        return cell    }
+        return cell
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let movie = viewModel.getMovie(at: indexPath.row) else { return }

@@ -12,7 +12,7 @@ enum UserDefaultsKeys: String {
     case joinDate = "JoinDate"
     case userName = "UserName"
     case profileImageName = "profileImageName"
-    case searchHistory = "SearchHistory"
+    case searchHistory = "searchHistory"
     case likedMovies = "LikedMovies"
     
     static func resetDefaults() {

@@ -81,7 +81,7 @@ final class SearchResultViewModel: BaseViewModel {
         }
         searchHistory.insert(searchText, at: 0)
         UserDefaults.standard.set(searchHistory, forKey: UserDefaultsKeys.searchHistory.rawValue)
-        print("After save - Updated history:", searchHistory)
+//        print("저장했잖아:", searchHistory)
     }
     
     func getMovie(at index: Int) -> SearchResult? {

@@ -9,8 +9,10 @@ import UIKit
 import Alamofire
 import Kingfisher
 import SnapKit
-
+// 코드 전체적으로 탭했을떄 api요청이 있는경우는 여러번의 탭을 막고싶다 -추가해보기
 final class MovieDetailViewController: BaseViewController {
+    
+    private let viewModel = MovieDetailViewModel()
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -24,7 +26,7 @@ final class MovieDetailViewController: BaseViewController {
     
     // MARK: - BackDrops
     private lazy var backDropsCV = UICollectionView(frame: .zero, collectionViewLayout: createBackdropsCollectionView())
-    private var backDrops: [Backdrop] = []
+//    private var backDrops: [Backdrop] = []
     private let pageControl = UIPageControl()
     
     // MARK: - synopsis -- more
@@ -38,11 +40,11 @@ final class MovieDetailViewController: BaseViewController {
     // MARK: - Cast
     private let castLabel = UILabel()
     private lazy var castCV = UICollectionView(frame: .zero, collectionViewLayout: createCastCollectionView())
-    private var castList: [Cast] = []
+//    private var castList: [Cast] = []
     
     // MARK: - Poster
     private let posterLabel = UILabel()
-    private var posterList: [Posters] = []
+//    private var posterList: [Posters] = []
     private lazy var posterCV = UICollectionView(frame: .zero, collectionViewLayout: createPosterCollectionView())
     
     private func createBackdropsCollectionView() -> UICollectionViewLayout {
@@ -79,8 +81,49 @@ final class MovieDetailViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        callRequest(movieId: movieId)
-        updateLikeButtonImage()
+        bindData()
+        viewModel.input.viewDidLoad.value = movieId
+    }
+    
+    private func bindData() {
+        viewModel.output.backdrops.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.backDropsCV.reloadData()
+            }
+        }
+        
+        viewModel.output.posters.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.posterCV.reloadData()
+            }
+        }
+        
+        viewModel.output.casts.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.castCV.reloadData()
+            }
+        }
+        
+        viewModel.output.pageCount.bind { [weak self] count in
+            self?.pageControl.numberOfPages = count
+        }
+        
+        //모양 옵데이트
+        viewModel.output.isLiked.bind { [weak self] isLiked in
+            let imageName = isLiked ? "heart.fill" : "heart"
+            self?.likeButton.setImage(UIImage(systemName: imageName), for: .normal)
+            self?.likeButton.tintColor = isLiked ? .accentBlue : .normalGray
+        }
+        
+        viewModel.output.showError.bind { [weak self] error in
+            if let error = error {
+                self?.showAlert(title: error.title, message: error.message, button: "확인") {
+                    self?.backDropsCV.reloadData()
+                    self?.posterCV.reloadData()
+                    self?.castCV.reloadData()
+                }
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -88,53 +131,71 @@ final class MovieDetailViewController: BaseViewController {
         NotificationCenter.default.post(name: NSNotification.Name("UpdateLikeButton"), object: nil)
     }
     
-    private func callRequest(movieId: Int?) {
-        guard let id = movieId else { return }
-        let group = DispatchGroup()
-        
-        group.enter()
-        NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { result in
-            defer { group.leave() }
-            
-            switch result {
-            case .success(let response):
-                self.backDrops = response.backdrops
-                self.posterList = response.posters
-                
-                if self.backDrops.count > 5 {
-                    self.pageControl.numberOfPages = 5
-                } else {
-                    self.pageControl.numberOfPages = self.backDrops.count
-                }
-                
-            case .failure:
-                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-                    self.backDropsCV.reloadData()
-                    self.posterCV.reloadData()
-                }
+    @objc
+    private func likeButtonTapped() {
+        viewModel.input.likeButtonTapped.value = movieId
+    }
+    
+    @objc
+    private func synopsisMoreButtonTapped() {
+        synopsisMoreButton.isSelected.toggle()
+        UIView.animate(withDuration: 0.3) {
+            if self.synopsisMoreButton.isSelected {
+                self.overviews.numberOfLines = 0
+            } else {
+                self.overviews.numberOfLines = 3
             }
-        }
-        
-        group.enter()
-        NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { result in
-            defer { group.leave() }
-            
-            switch result {
-            case .success(let response):
-                self.castList = response.cast
-            case .failure:
-                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-                    self.castCV.reloadData()
-                }
-            }
-        }
-        
-        group.notify(queue: .main) {
-            self.backDropsCV.reloadData()
-            self.posterCV.reloadData()
-            self.castCV.reloadData()
+            self.view.layoutIfNeeded()
         }
     }
+    
+//    private func callRequest(movieId: Int?) {
+//        guard let id = movieId else { return }
+//        let group = DispatchGroup()
+//        
+//        group.enter()
+//        NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { result in
+//            defer { group.leave() }
+//            
+//            switch result {
+//            case .success(let response):
+//                self.backDrops = response.backdrops
+//                self.posterList = response.posters
+//                
+//                if self.backDrops.count > 5 {
+//                    self.pageControl.numberOfPages = 5
+//                } else {
+//                    self.pageControl.numberOfPages = self.backDrops.count
+//                }
+//                
+//            case .failure:
+//                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+//                    self.backDropsCV.reloadData()
+//                    self.posterCV.reloadData()
+//                }
+//            }
+//        }
+//        
+//        group.enter()
+//        NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { result in
+//            defer { group.leave() }
+//            
+//            switch result {
+//            case .success(let response):
+//                self.castList = response.cast
+//            case .failure:
+//                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
+//                    self.castCV.reloadData()
+//                }
+//            }
+//        }
+//        
+//        group.notify(queue: .main) {
+//            self.backDropsCV.reloadData()
+//            self.posterCV.reloadData()
+//            self.castCV.reloadData()
+//        }
+//    }
     
     override func configureHierarchy() {
         view.addSubview(scrollView)
@@ -286,43 +347,6 @@ final class MovieDetailViewController: BaseViewController {
         posterCV.backgroundColor = .clear
     }
     
-    @objc
-    private func likeButtonTapped() {
-        guard let movieId = movieId else { return }
-        var likedMovies = UserDefaults.standard.array(forKey: UserDefaultsKeys.likedMovies.rawValue) as? [Int] ?? []
-        
-        if likedMovies.contains(movieId) {
-            likedMovies.removeAll { $0 == movieId }
-        } else {
-            likedMovies.append(movieId)
-        }
-        
-        UserDefaults.standard.set(likedMovies, forKey: UserDefaultsKeys.likedMovies.rawValue)
-        updateLikeButtonImage()
-        NotificationCenter.default.post(name: NSNotification.Name("LikeStatusChanged"), object: nil)
-    }
-    
-    private func updateLikeButtonImage() {
-        guard let movieId = movieId else { return }
-        let likedMovies = UserDefaults.standard.array(forKey: UserDefaultsKeys.likedMovies.rawValue) as? [Int] ?? []
-        let imageName = likedMovies.contains(movieId) ? "heart.fill" : "heart"
-        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
-        likeButton.tintColor = likedMovies.contains(movieId) ? .accentBlue : .normalGray
-    }
-    
-    @objc
-    private func synopsisMoreButtonTapped() {
-        synopsisMoreButton.isSelected.toggle()
-        UIView.animate(withDuration: 0.3) {
-            if self.synopsisMoreButton.isSelected {
-                self.overviews.numberOfLines = 0
-            } else {
-                self.overviews.numberOfLines = 3
-            }
-            self.view.layoutIfNeeded()
-        }
-    }
-    
     private func configureSynopsis() {
         if let overview {
             overviews.text = overview
@@ -344,15 +368,15 @@ extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case backDropsCV:
-            if backDrops.count > 5 {
+            if viewModel.output.backdrops.value.count > 5 {
                 return 5
             } else {
-                return backDrops.count
+                return viewModel.output.backdrops.value.count
             }
         case castCV:
-            return castList.count
+            return viewModel.output.casts.value.count
         default:
-            return posterList.count
+            return viewModel.output.posters.value.count
         }
     }
     
@@ -360,25 +384,23 @@ extension MovieDetailViewController: UICollectionViewDelegate, UICollectionViewD
         
         switch collectionView {
         case backDropsCV:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BackDropsCollectionViewCell.id, for: indexPath) as? BackDropsCollectionViewCell else { return UICollectionViewCell()}
-            let data = backDrops[indexPath.item]
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BackDropsCollectionViewCell.id, for: indexPath) as? BackDropsCollectionViewCell,
+                  let data = viewModel.getBackdrop(at: indexPath.item) else { return UICollectionViewCell() }
             cell.configureData(data: data)
             return cell
             
         case castCV:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CastCollectionViewCell.id, for: indexPath) as? CastCollectionViewCell else { return UICollectionViewCell()}
-            let data = castList[indexPath.item]
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CastCollectionViewCell.id, for: indexPath) as? CastCollectionViewCell,
+                  let data = viewModel.getCast(at: indexPath.item) else { return UICollectionViewCell() }
             cell.configureData(data: data)
             return cell
             
         default:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCollectionViewCell.id, for: indexPath) as? PosterCollectionViewCell else { return
-                UICollectionViewCell() }
-            let data = posterList[indexPath.item]
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PosterCollectionViewCell.id, for: indexPath) as? PosterCollectionViewCell,
+                  let data = viewModel.getPoster(at: indexPath.item) else { return UICollectionViewCell() }
             cell.configureData(data: data)
             return cell
-        }
-    }
+        }    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == backDropsCV {

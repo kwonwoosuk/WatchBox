@@ -28,7 +28,6 @@ final class TodayMovieViewModel: BaseViewModel {
     private(set) var input: Input
     private(set) var output: Output
     
-    
     init() {
         input = Input()
         output = Output()
@@ -36,13 +35,14 @@ final class TodayMovieViewModel: BaseViewModel {
     }
     
     func transform() {
+        // 뷰 로드될때 프로필 데이터, 최근검색어, 오늘의 영화셀 api호출
         input.viewWillAppear.bind { [weak self] _ in
             self?.fetchProfileData()
             self?.fetchSearchHistory()
             self?.fetchTodayMovies()
         }
-        
-        input.allClearTapped.bind { [weak self] _ in
+        // 껐다켜면 초기화 되던 이
+        input.allClearTapped.lazybind { [weak self] _ in
             UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.searchHistory.rawValue)
             self?.fetchSearchHistory()
         }
@@ -71,10 +71,12 @@ final class TodayMovieViewModel: BaseViewModel {
     }
     
     private func fetchSearchHistory() {
-        let history = UserDefaults.standard.stringArray(forKey: UserDefaultsKeys.searchHistory.rawValue) ?? []
-        print("Fetched search history:", history)
-        output.searchedHistory.value = history
-        output.isEmptySearchHistory.value = history.isEmpty
+        DispatchQueue.main.async { [weak self] in
+            let history = UserDefaults.standard.stringArray(forKey: UserDefaultsKeys.searchHistory.rawValue) ?? []
+            self?.output.searchedHistory.value = history
+            self?.output.isEmptySearchHistory.value = history.isEmpty
+            
+        }
     }
     
     private func fetchTodayMovies() {

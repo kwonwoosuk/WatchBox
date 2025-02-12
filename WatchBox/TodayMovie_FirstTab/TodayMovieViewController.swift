@@ -10,7 +10,7 @@ import SnapKit
 // fourthWeek
 // photoproject // topic
 final class TodayMovieViewController: BaseViewController {
-
+    
     private let viewModel = TodayMovieViewModel()
     
     private let profileSection = ProfileSectionView()
@@ -18,8 +18,6 @@ final class TodayMovieViewController: BaseViewController {
     private let allClearButton = UIButton()
     private let emptyLabel = UILabel()
     private let todayMovieLabel = UILabel()
-
-
     
     private lazy var searchHistoryCV = UICollectionView(frame: .zero, collectionViewLayout: createSearchHistoryCollectionView())
     private lazy var todayMovieCV = UICollectionView(frame: .zero, collectionViewLayout: createTodayMovieCollectionView())
@@ -29,11 +27,13 @@ final class TodayMovieViewController: BaseViewController {
         super.viewWillAppear(animated)
         viewModel.input.viewWillAppear.value = ()
     }
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
         bindData()
         profileSection.updateLikeCount()
+        searchHistoryCV.reloadData()
     }
     
     private func bindData() {
@@ -47,7 +47,6 @@ final class TodayMovieViewController: BaseViewController {
             }
         }
         
-        // 왜 껐다키면 사라지냐고요... 진짜 짜증나
         viewModel.output.searchedHistory.bind { [weak self] _ in
             DispatchQueue.main.async {
                 self?.searchHistoryCV.reloadData()
@@ -72,13 +71,6 @@ final class TodayMovieViewController: BaseViewController {
             }
         }
     }
-    //--------------------------------
-//    private func updateSearchHistoryUI() {
-//        let searchHistory = viewModel.output.searchedHistory.value
-//        emptyLabel.isHidden = !searchHistory.isEmpty
-//        searchHistoryCV.isHidden = searchHistory.isEmpty
-//        searchHistoryCV.reloadData()
-//    }
     
     @objc
     private func allClearButtonTapped() {
@@ -248,7 +240,7 @@ extension TodayMovieViewController: UICollectionViewDelegate, UICollectionViewDa
             
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchKeywordCollectionViewCell.id, for: indexPath) as? SearchKeywordCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureKeyword(searchQuery: viewModel.output.searchedHistory.value[indexPath.item])
+            cell.configureKeyword(searchQuery: viewModel.output.searchedHistory.value[indexPath.item])//값이 없오?
             
             cell.deleteButtonHandler = { [weak self] in
                 self?.viewModel.input.deleteKeyword.value = indexPath.item
