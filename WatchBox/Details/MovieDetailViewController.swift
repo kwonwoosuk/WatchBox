@@ -149,54 +149,6 @@ final class MovieDetailViewController: BaseViewController {
         }
     }
     
-//    private func callRequest(movieId: Int?) {
-//        guard let id = movieId else { return }
-//        let group = DispatchGroup()
-//        
-//        group.enter()
-//        NetworkManager.shared.callRequest(api: .image(movieId: id), type: Images.self) { result in
-//            defer { group.leave() }
-//            
-//            switch result {
-//            case .success(let response):
-//                self.backDrops = response.backdrops
-//                self.posterList = response.posters
-//                
-//                if self.backDrops.count > 5 {
-//                    self.pageControl.numberOfPages = 5
-//                } else {
-//                    self.pageControl.numberOfPages = self.backDrops.count
-//                }
-//                
-//            case .failure:
-//                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-//                    self.backDropsCV.reloadData()
-//                    self.posterCV.reloadData()
-//                }
-//            }
-//        }
-//        
-//        group.enter()
-//        NetworkManager.shared.callRequest(api: .credit(movieId: id), type: Credit.self) { result in
-//            defer { group.leave() }
-//            
-//            switch result {
-//            case .success(let response):
-//                self.castList = response.cast
-//            case .failure:
-//                self.showAlert(title: "정보를 불러오지 못했습니다", message: "다시 요청하시겠습니까?", button: "확인") {
-//                    self.castCV.reloadData()
-//                }
-//            }
-//        }
-//        
-//        group.notify(queue: .main) {
-//            self.backDropsCV.reloadData()
-//            self.posterCV.reloadData()
-//            self.castCV.reloadData()
-//        }
-//    }
-    
     override func configureHierarchy() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
